@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# Evgenia Vesterblom
 # Software License Agreement (BSD License)
 
 import rospy
@@ -10,12 +11,12 @@ def walker():
     pub_velocity = rospy.Publisher('velocity', Vector3, queue_size=10)
     pub_name = rospy.Publisher('name_and_time', String, queue_size=10)
     rospy.init_node('walker', anonymous=True)
-    rate = rospy.Rate(1)  ##2
+    rate = rospy.Rate(2)  ##2Hz
     while not rospy.is_shutdown():
-        test_list = [1, 0, -1]
+        point_list = [1, 0, -1]
         out = Vector3()
-        out.x = random.choice(test_list)
-        out.y = random.choice(test_list)
+        out.x = random.choice(point_list)
+        out.y = random.choice(point_list)
         out.z = 0
         
         name_str = "224772,%s" % rospy.get_time()
