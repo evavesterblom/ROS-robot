@@ -118,6 +118,11 @@
             <color rgba="0 1 0 1"/>
       </material>
     </visual>
+    <collision>
+      <geometry>
+        <sphere radius="0.01"/>
+      </geometry>
+    </collision>
     <inertial>
       <mass value="20"/>
       <inertia ixx="0.0008"  iyy="0.0008" izz="0.0008"  ixy="0"  ixz="0" iyz="0"/>
