@@ -25,3 +25,12 @@ rosrun ias0220_224772 random_walker.py
 rosrun ias0220_224772 odometer.py
 
 ```
+
+
+## Additional helpers
+1. Warnings/debugs\
+http://wiki.ros.org/ROS/Tutorials/UsingRqtconsoleRoslaunch
+
+2. .launch file structure\
+http://www.clearpathrobotics.com/assets/guides/kinetic/ros/Launch%20Files.html \
+http://wiki.ros.org/roslaunch/XML/node
