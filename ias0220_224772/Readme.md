@@ -48,6 +48,9 @@ source /devel/setup.bash
 source /opt/ros/noetic/setup.bash
 rosrun teleop_twist_keyboard teleop_twist_keyboard.py - vajab topicut cmd_vel
 roslaunch ias0220_224772 differential_robot_task3_part2.launch 
+roslaunch ias0220_224772  differential_robot_simu_task4_part1.launch 
+
+
 
 ```
 

@@ -1,7 +1,7 @@
  <launch>
 
   <include file="$(find ias0220_224772)/launch/gazebo.launch">
-        <arg name="model" value="'$(find ias0220_224772)/urdf/differential_robot_simu_task4_part1.urdf'" />  
+        <arg name="model" value="'$(find ias0220_224772)/urdf/differential_robot_simu_task4_part2.urdf'" />  
  </include>
 
 
@@ -30,5 +30,6 @@
  <node name="rviz" pkg="rviz" type="rviz" args="--display-config $(find ias0220_224772)/config/differential_robot.rviz" />
  <node name="rqt_graph" pkg="rqt_graph" type="rqt_graph"/>
 
+ <node pkg="ias0220_224772" name="encoders_node" type="encoders_node.py"/>
 
 </launch>
