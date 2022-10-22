@@ -118,8 +118,6 @@ Visualization Manager:
           Value: true
         left_wheel:
           Value: true
-        map:
-          Value: true
         passive_wheel:
           Value: true
         passive_wheel_holder:
@@ -133,25 +131,24 @@ Visualization Manager:
       Show Axes: true
       Show Names: true
       Tree:
-        map:
-          base_footprint:
-            base_link:
-              head:
+        base_footprint:
+          base_link:
+            head:
+              {}
+            left_wheel:
+              {}
+            passive_wheel_holder:
+              passive_wheel:
                 {}
-              left_wheel:
-                {}
-              passive_wheel_holder:
-                passive_wheel:
-                  {}
-              right_wheel:
-                {}
+            right_wheel:
+              {}
       Update Interval: 0
       Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
     Default Light: true
-    Fixed Frame: map
+    Fixed Frame: base_footprint
     Frame Rate: 30
   Name: root
   Tools:
