@@ -181,7 +181,7 @@
 
    <transmission name="base_to_right_wheel_trans">
     <type>transmission_interface/SimpleTransmission</type>
-    <actuator name="motor_right">
+    <actuator name="base_to_right_wheel_motor">
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
     <joint name="base_to_right_wheel">
@@ -191,7 +191,7 @@
 
   <transmission name="base_to_left_wheel_trans">
     <type>transmission_interface/SimpleTransmission</type>
-    <actuator name="motor_left">
+    <actuator name="base_to_left_wheel_motor">
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
     <joint name="base_to_left_wheel">
