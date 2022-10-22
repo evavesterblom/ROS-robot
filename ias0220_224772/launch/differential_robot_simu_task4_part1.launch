@@ -14,7 +14,7 @@
   <rosparam command="load" 
             file="$(find ias0220_224772)/config/gazebo_ros_control_params.yaml" />
 
-  <node name="r2d2_controller_spawner" pkg="controller_manager" type="spawner"
+  <node name="controller_spawner" pkg="controller_manager" type="spawner"
     args="joint_state_controller
           diff_drive_controller"/>
 

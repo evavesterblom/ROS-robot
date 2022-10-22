@@ -118,6 +118,8 @@ Visualization Manager:
           Value: true
         left_wheel:
           Value: true
+        odom:
+          Value: true
         passive_wheel:
           Value: true
         passive_wheel_holder:
@@ -131,24 +133,25 @@ Visualization Manager:
       Show Axes: true
       Show Names: true
       Tree:
-        base_footprint:
-          base_link:
-            head:
-              {}
-            left_wheel:
-              {}
-            passive_wheel_holder:
-              passive_wheel:
+        odom:
+          base_footprint:
+            base_link:
+              head:
                 {}
-            right_wheel:
-              {}
+              left_wheel:
+                {}
+              passive_wheel_holder:
+                passive_wheel:
+                  {}
+              right_wheel:
+                {}
       Update Interval: 0
       Value: true
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
     Default Light: true
-    Fixed Frame: base_footprint
+    Fixed Frame: odom
     Frame Rate: 30
   Name: root
   Tools:
@@ -182,14 +185,14 @@ Visualization Manager:
       Focal Point:
         X: 0
         Y: 0
-        Z: 0
+        Z: -0.03999999910593033
       Focal Shape Fixed Size: false
       Focal Shape Size: 0.05000000074505806
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.10000000149011612
       Pitch: 0.7103985548019409
-      Target Frame: base_footprint
+      Target Frame: base_link
       Yaw: 0.07540173083543777
     Saved: ~
 Window Geometry:
