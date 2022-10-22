@@ -185,7 +185,7 @@
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
     <joint name="base_to_right_wheel">
-      <hardwareInterface>VelocityJointInterface</hardwareInterface>
+      <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
     </joint>
   </transmission>
 
@@ -195,7 +195,7 @@
       <mechanicalReduction>1</mechanicalReduction>
     </actuator>
     <joint name="base_to_left_wheel">
-      <hardwareInterface>VelocityJointInterface</hardwareInterface>
+      <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
     </joint>
   </transmission>
 
