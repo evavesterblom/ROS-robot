@@ -167,7 +167,7 @@ include_directories(
 #   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 # )
 
-catkin_install_python(PROGRAMS scripts/talker.py scripts/listener.py scripts/random_walker.py scripts/odometer.py scripts/encoders_node.py
+catkin_install_python(PROGRAMS scripts/talker.py scripts/listener.py scripts/random_walker.py scripts/odometer.py scripts/encoders_node.py scripts/odometer_encoder.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
