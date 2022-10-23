@@ -2,7 +2,7 @@
 # Software License Agreement (BSD License)
 
 # Simple talker demo that listens to std_msgs/Strings published
-# to the 'chatter' topic
+# rosrun ias0220_224772 odometer_encoder.py 
 
 
 import rospy
