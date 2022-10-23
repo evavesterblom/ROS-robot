@@ -148,8 +148,8 @@
   <joint name="base_to_left_wheel" type="continuous">
     <parent link="base_link"/>
     <child link="right_wheel"/>
-    <axis xyz="0 0 1"/>
-    <origin rpy="1.57 0 0" xyz="0 -0.1 0"/>
+    <axis xyz="0 0 -1"/>
+    <origin rpy="1.57 0 0" xyz="0 -0.1 0"/><!--this atleast moves was 1.57-->
   </joint>
   
   <joint name="base_to_head" type="fixed">
@@ -174,22 +174,14 @@
 
 
     <gazebo reference="passive_wheel">
-      <mu1 value="0.01"/>
-      <mu2 value="0.01"/>
       <material>Gazebo/Green</material>
     </gazebo>
 
     <gazebo reference="left_wheel">
-      <mu1 value="12"/>
-      <mu2 value="300"/>
-      <kd value="44"/>
       <material>Gazebo/Red</material>
     </gazebo>
 
     <gazebo reference="right_wheel">
-      <mu1 value="12"/>
-      <mu2 value="300"/>
-      <kd value="44"/>
       <material>Gazebo/Red</material>
     </gazebo>
 
