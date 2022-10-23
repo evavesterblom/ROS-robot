@@ -1,0 +1,57 @@
+  Hi can you help me out.
+  I see something I cant understand
+
+  1) When rviz opens up - which frames should be fixed? So that I could see the movement correctly.
+  I fixed odom, in grid - base_footprint and on right side on camera base_link
+
+  2) Now lets say the frame fixations are correct in the visual. 
+  When I press i on teleop, then robot should move forward. In rviz it 'kinda' moves forward. 
+  But what I cant understand is right wheel, robot moves forward, but right wheel rotates backwards?
+
+  3) Gazebo shows the same, left wheel moves forward and right wheel moves backward. Therefore the robots motion is around itself.
+
+  What is wrong and how to correct it? PS the wheel joints frames should? be as was asked in task 2 -- the Z axis pointing outside.
+  
+  <joint name="base_to_right_wheel" type="continuous">
+    <parent link="base_link"/>
+    <child link="left_wheel"/>
+    <axis xyz="0 0 1"/>
+    <origin rpy="-1.57 0 0" xyz="0 0.1 0"/>
+  </joint>
+  
+  <joint name="base_to_left_wheel" type="continuous">
+    <parent link="base_link"/>
+    <child link="right_wheel"/>
+    <axis xyz="0 0 1"/>
+    <origin rpy="1.57 0 0" xyz="0 -0.1 0"/>
+  </joint>
+
+  <gazebo reference="left_wheel">
+    <material>Gazebo/Red</material>
+  </gazebo>
+
+  <gazebo reference="right_wheel">
+    <material>Gazebo/Red</material>
+  </gazebo>
+
+  <transmission name="base_to_right_wheel_trans">
+    <type>transmission_interface/SimpleTransmission</type>
+    <actuator name="base_to_right_wheel_motor">
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+    <joint name="base_to_right_wheel">
+      <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+    </joint>
+  </transmission>
+
+  <transmission name="base_to_left_wheel_trans">
+    <type>transmission_interface/SimpleTransmission</type>
+    <actuator name="base_to_left_wheel_motor">
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+    <joint name="base_to_left_wheel">
+      <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+    </joint>
+  </transmission>
+
+
