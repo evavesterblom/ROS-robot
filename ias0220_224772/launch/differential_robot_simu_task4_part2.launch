@@ -5,6 +5,7 @@
  </include>
 
 
+
   <rosparam command="load"
             file="$(find ias0220_224772)/config/joints.yaml"
             ns="joint_state_controller" />
@@ -31,5 +32,6 @@
  <node name="rqt_graph" pkg="rqt_graph" type="rqt_graph"/>
 
  <node pkg="ias0220_224772" name="encoders_node" type="encoders_node.py"/>
+
 
 </launch>
