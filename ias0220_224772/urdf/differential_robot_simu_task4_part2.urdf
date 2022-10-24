@@ -138,14 +138,14 @@
     <origin rpy="0 0 0" xyz="0 0 0.04"/>
   </joint>
   
-  <joint name="base_to_right_wheel" type="continuous">
+  <joint name="base_to_left_wheel" type="continuous">
     <parent link="base_link"/>
     <child link="left_wheel"/>
     <axis xyz="0 0 1"/>
     <origin rpy="-1.57 0 0" xyz="0 0.1 0"/>
   </joint>
   
-  <joint name="base_to_left_wheel" type="continuous">
+  <joint name="base_to_right_wheel" type="continuous">
     <parent link="base_link"/>
     <child link="right_wheel"/>
     <axis xyz="0 0 -1"/>
@@ -169,9 +169,6 @@
     <child link="passive_wheel"/>
     <origin rpy="0 0 0" xyz="0 0 -0.01"/>
   </joint>
-
-
-
 
     <gazebo reference="passive_wheel">
       <material>Gazebo/Green</material>
