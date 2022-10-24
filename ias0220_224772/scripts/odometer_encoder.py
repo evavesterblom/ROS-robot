@@ -13,25 +13,43 @@ from geometry_msgs.msg import Pose
 from visualization_msgs.msg import Marker
 from ias0220_224772.msg import counter_message
 
+def calculate_ticks_since(previous, current):
+    treshold = 300
+
+    if abs(current - previous) < treshold:
+        ticks_since = current - previous
+    else:
+        ticks_since = 2048 - previous + current
+
+    return ticks_since
+
 def callback_encoder_listener(data):
-    left_wheel_count = data.count_left
-    right_wheel_count = data.count_right
+    #read encoder
+    current_left_counter = data.count_left
+    current_right_counter = data.count_right
     time = rospy.get_time()
-
     global previous_time
-    rate = time - previous_time
-    rospy.loginfo('At %s - Listened that data is - %s -- %s. Rate %s', time, left_wheel_count, right_wheel_count, rate)
+    time_since = time - previous_time
 
-    global previous_left_counter 
-    previous_left_counter = left_wheel_count
+    global previous_left_counter
     global previous_right_counter 
-    previous_right_counter = previous_right_counter
+    left_since = calculate_ticks_since(previous_left_counter, current_left_counter)
+    right_since = calculate_ticks_since(previous_right_counter, current_right_counter) * -1 #reversed movement
+
+    #rospy.loginfo('%s', current_left_counter)
+    #rospy.loginfo('%s', current_right_counter)
+    #rospy.loginfo('Left data %s   prev %s     current %s   ticks %s', time_since, previous_left_counter, current_left_counter, left_since)
+    rospy.loginfo('R data %s   prev %s     current %s   ticks %s', time_since, previous_right_counter, current_right_counter, right_since)
+
+
+    #current is next interation previous
+    previous_left_counter = current_left_counter
+    previous_right_counter = current_right_counter
     previous_time = time
 
 
 
 def mainloop():
-    #rospy.init_node('position_calculator', anonymous=True)
     rospy.Subscriber('encoders_output', counter_message, callback_encoder_listener)  # listen encoder
     rospy.spin()
 
