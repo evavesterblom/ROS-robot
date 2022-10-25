@@ -49,9 +49,9 @@ def calculate_publish_odom_msg(robot_linear_velocity, robot_anglar_velocity, tim
     global x
     global y
 
-    x = x + v_ox * dt
-    y = y + v_oy * dt
-    theta_k = theta_k + thetadot * dt
+    x = x + (v_ox * dt)
+    y = y + (v_oy * dt)
+    theta_k = theta_k + (thetadot * dt)
 
     #fill odom msg
     global odom_msg
@@ -79,6 +79,15 @@ def calculate_publish_odom_msg(robot_linear_velocity, robot_anglar_velocity, tim
     odom_msg.pose.pose.orientation.y = quaternion[1]
     odom_msg.pose.pose.orientation.z = quaternion[2]
     odom_msg.pose.pose.orientation.w = quaternion[3]
+
+
+    #odom_broadcaster.sendTransform(
+    #    (x, y, 0.),
+    #     quaternion,
+    #    time_header,
+    #   "base_link",
+    #    "odom"
+    #)
 
     #publish
     pub_odom.publish(odom_msg)
@@ -111,8 +120,8 @@ def callback_encoder_listener(data):
     right_angual_velocity = calculate_angular_velocity(right_since, time_since)
 
     #linear velocity
-    left_linear_velocity = calculate_linear_velocity(left_angual_velocity, 0.04)
-    right_linear_velocity = calculate_linear_velocity(right_angual_velocity, 0.04)
+    left_linear_velocity = left_angual_velocity * 0.04 #omega*R
+    right_linear_velocity = right_angual_velocity * 0.04
 
     #linear velocity robot Vp
     robot_linear_velocity = (left_linear_velocity + right_linear_velocity) / 2
@@ -148,6 +157,7 @@ if __name__ == '__main__':
 
     rospy.init_node('position_calculator', anonymous=True)
     pub_odom = rospy.Publisher('odom', Odometry, queue_size=50)
+    odom_broadcaster = tf.TransformBroadcaster()
 
     while rospy.get_time() == 0.0: #wait init
         time.sleep(1.0)
@@ -166,9 +176,6 @@ if __name__ == '__main__':
     x = 0
     y = 0
     theta_k = 0
-
-    out = Vector3()
-
     counter = 0
 
 
