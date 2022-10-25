@@ -149,7 +149,7 @@
     <parent link="base_link"/>
     <child link="right_wheel"/>
     <axis xyz="0 0 -1"/>
-    <origin rpy="1.57 0 0" xyz="0 -0.1 0"/><!--this atleast moves was 1.57-->
+    <origin rpy="1.57 0 0" xyz="0 -0.1 0"/>
   </joint>
   
   <joint name="base_to_head" type="fixed">
@@ -210,6 +210,18 @@
     <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
       <robotNamespace>/</robotNamespace>
     </plugin>
+
+<plugin name="p3d_base_controller" filename="libgazebo_ros_p3d.so">
+  <alwaysOn>true</alwaysOn>
+  <updateRate>50.0</updateRate>
+  <bodyName>base_link</bodyName>
+  <topicName>ground_truth</topicName>
+  <gaussianNoise>0.01</gaussianNoise>
+  <frameName>map</frameName>
+  <xyzOffsets>0 0 0</xyzOffsets>
+  <rpyOffsets>0 0 0</rpyOffsets>
+</plugin> 
+
   </gazebo>
   
 </robot>
