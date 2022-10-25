@@ -8,7 +8,6 @@ Panels:
         - /Status1
         - /Grid1
         - /RobotModel1
-        - /TF1
         - /Odometry1/Shape1
         - /Odometry2/Shape1
         - /Odometry3
@@ -122,6 +121,8 @@ Visualization Manager:
           Value: true
         left_wheel:
           Value: true
+        map:
+          Value: true
         odom:
           Value: true
         passive_wheel:
@@ -137,18 +138,19 @@ Visualization Manager:
       Show Axes: true
       Show Names: true
       Tree:
-        odom:
-          base_footprint:
-            base_link:
-              head:
-                {}
-              left_wheel:
-                {}
-              passive_wheel_holder:
-                passive_wheel:
+        map:
+          odom:
+            base_footprint:
+              base_link:
+                head:
                   {}
-              right_wheel:
-                {}
+                left_wheel:
+                  {}
+                passive_wheel_holder:
+                  passive_wheel:
+                    {}
+                right_wheel:
+                  {}
       Update Interval: 0
       Value: true
     - Angle Tolerance: 0.10000000149011612
@@ -168,7 +170,7 @@ Visualization Manager:
           Scale: 1
           Value: true
         Value: false
-      Enabled: false
+      Enabled: true
       Keep: 6
       Name: Odometry
       Position Tolerance: 0.10000000149011612
@@ -185,7 +187,7 @@ Visualization Manager:
         Value: Arrow
       Topic: /odom
       Unreliable: false
-      Value: false
+      Value: true
     - Angle Tolerance: 0.10000000149011612
       Class: rviz/Odometry
       Covariance:
@@ -203,7 +205,7 @@ Visualization Manager:
           Scale: 1
           Value: true
         Value: true
-      Enabled: false
+      Enabled: true
       Keep: 10
       Name: Odometry
       Position Tolerance: 0.10000000149011612
@@ -220,7 +222,7 @@ Visualization Manager:
         Value: Arrow
       Topic: /diff_drive_controller/odom
       Unreliable: false
-      Value: false
+      Value: true
     - Angle Tolerance: 0.10000000149011612
       Class: rviz/Odometry
       Covariance:
@@ -284,7 +286,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/Orbit
-      Distance: 0.8994061946868896
+      Distance: 5.659398555755615
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.05999999865889549
         Stereo Focal Distance: 1
@@ -300,9 +302,9 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.10000000149011612
-      Pitch: 0.5053987503051758
+      Pitch: 1.5497963428497314
       Target Frame: base_link
-      Yaw: 2.6554019451141357
+      Yaw: 3.1304032802581787
     Saved: ~
 Window Geometry:
   Displays:
