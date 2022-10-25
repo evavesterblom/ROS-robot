@@ -11,6 +11,7 @@ import math
 from geometry_msgs.msg import Quaternion
 from nav_msgs.msg import Odometry
 from geometry_msgs.msg import Vector3
+from geometry_msgs.msg import Pose
 import tf
 from ias0220_224772.msg import counter_message
 
@@ -29,50 +30,51 @@ def calculate_ticks_since(previous, current):
         ticks_since = 2048 - previous + current
     return ticks_since
 
-def calculate_publish_odom_msg(robot_linear_velocity, robot_anglar_velocity, time_since, time):
+def calculate_publish_odom_msg(robot_linear_velocity, robot_anglar_velocity, time_since, time, time_header):
     #https://answers.ros.org/question/231942/computing-odometry-from-two-velocities/
     #velocities robot (r) frame
     dt = time_since
     v_rx = robot_linear_velocity
     v_ry = 0
     omega_r = robot_anglar_velocity
-    theta = omega_r / dt
+    #theta = (omega_r * dt) * 57
 
     #velocities odom (o) frame
-    v_ox = v_rx * math.cos(theta) - v_ry * math.sin(theta)
-    v_oy = v_rx * math.sin(theta) + v_ry * math.cos(theta)
+    global theta_k
+    v_ox = v_rx * math.cos(theta_k) - v_ry * math.sin(theta_k)
+    v_oy = v_rx * math.sin(theta_k) + v_ry * math.cos(theta_k)
     thetadot = omega_r
 
     #compute current robot pose with respect to odom - integration
     global x
     global y
-    global theta_k
+
     x = x + v_ox * dt
     y = y + v_oy * dt
     theta_k = theta_k + thetadot * dt
 
     #fill odom msg
     global odom_msg
-    odom_msg.header.stamp = time
+    odom_msg.header.frame_id = "odom"
+    odom_msg.child_frame_id = "base_link"
+    odom_msg.header.stamp = time_header
     odom_msg.header.seq +=1
     
-    linear_v = Vector3()
-    angular_v = Vector3()
-    linear_v.x = v_rx
-    linear_v.y = 0
-    linear_v.z = 0
-    angular_v.x = 0
-    angular_v.y = 0
-    angular_v.z = omega_r
-
+    #Twist
+    linear_v = Vector3(v_rx, 0, 0)
+    angular_v = Vector3(0, 0, omega_r)
     odom_msg.twist.twist.linear = linear_v #twist linear velocity in base_link (r) frame
     odom_msg.twist.twist.angular = angular_v #twist angular velocity in base_link (r) frame
    
+    #Pose
     odom_msg.pose.pose.position.x = x
     odom_msg.pose.pose.position.y = y
     odom_msg.pose.pose.position.z = 0
+
     quaternion = Quaternion()
-    quaternion = tf.transformations.quaternion_from_euler(0, 0, theta) #yaw is theta???
+    quaternion = tf.transformations.quaternion_from_euler(0, 0, theta_k) #yaw is theta???
+    #https://gist.github.com/atotto/f2754f75bedb6ea56e3e0264ec405dcf
+
     odom_msg.pose.pose.orientation.x = quaternion[0]
     odom_msg.pose.pose.orientation.y = quaternion[1]
     odom_msg.pose.pose.orientation.z = quaternion[2]
@@ -81,6 +83,12 @@ def calculate_publish_odom_msg(robot_linear_velocity, robot_anglar_velocity, tim
     #publish
     pub_odom.publish(odom_msg)
 
+
+
+
+
+
+
 def callback_encoder_listener(data):
     global counter
     counter += 1
@@ -88,6 +96,7 @@ def callback_encoder_listener(data):
     current_left_counter = data.count_left
     current_right_counter = data.count_right
     time = rospy.get_time()
+    time_header = rospy.Time.now()
     global previous_time
     time_since = time - previous_time
 
@@ -111,7 +120,7 @@ def callback_encoder_listener(data):
     #rotational velocity robot wz
     robot_anglar_velocity = (right_linear_velocity - left_linear_velocity) / 0.08
 
-    calculate_publish_odom_msg(robot_linear_velocity, robot_anglar_velocity, time_since, time)
+    calculate_publish_odom_msg(robot_linear_velocity, robot_anglar_velocity, time_since, time, time_header)
 
     #rospy.loginfo('%s - %s', left_angual_velocity, right_angual_velocity)
     #rospy.loginfo('%s', current_right_counter)
@@ -138,7 +147,7 @@ def mainloop():
 if __name__ == '__main__':    
 
     rospy.init_node('position_calculator', anonymous=True)
-    pub_odom = rospy.Publisher('odom', Odometry, queue_size=10)
+    pub_odom = rospy.Publisher('odom', Odometry, queue_size=50)
 
     while rospy.get_time() == 0.0: #wait init
         time.sleep(1.0)
@@ -157,6 +166,8 @@ if __name__ == '__main__':
     x = 0
     y = 0
     theta_k = 0
+
+    out = Vector3()
 
     counter = 0
 
