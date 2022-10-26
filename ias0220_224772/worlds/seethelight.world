@@ -1,9 +1,8 @@
-<html><head>
-<meta http-equiv="content-type" content="text/html; charset=UTF-8"></head><body><sdf version="1.6">
-  <world name="default">
-    <light name="sun" type="directional">
+<sdf version='1.6'>
+  <world name='default'>
+    <light name='sun' type='directional'>
       <cast_shadows>1</cast_shadows>
-      <pose frame="">0 0 10 0 -0 0</pose>
+      <pose frame=''>0 0 10 0 -0 0</pose>
       <diffuse>0.8 0.8 0.8 1</diffuse>
       <specular>0.1 0.1 0.1 1</specular>
       <attenuation>
@@ -14,10 +13,10 @@
       </attenuation>
       <direction>-0.5 0.5 -1</direction>
     </light>
-    <model name="ground_plane">
+    <model name='ground_plane'>
       <static>1</static>
-      <link name="link">
-        <collision name="collision">
+      <link name='link'>
+        <collision name='collision'>
           <geometry>
             <plane>
               <normal>0 0 1</normal>
@@ -31,17 +30,17 @@
                 <mu2>50</mu2>
               </ode>
               <torsional>
-                <ode>
-              </ode></torsional>
+                <ode/>
+              </torsional>
             </friction>
             <contact>
-              <ode>
-            </ode></contact>
-            <bounce>
-          </bounce></surface>
+              <ode/>
+            </contact>
+            <bounce/>
+          </surface>
           <max_contacts>10</max_contacts>
         </collision>
-        <visual name="visual">
+        <visual name='visual'>
           <cast_shadows>0</cast_shadows>
           <geometry>
             <plane>
@@ -59,12 +58,12 @@
         <self_collide>0</self_collide>
         <kinematic>0</kinematic>
         <gravity>1</gravity>
-      
+      </link>
     </model>
     <gravity>0 0 -9.8</gravity>
     <magnetic_field>6e-06 2.3e-05 -4.2e-05</magnetic_field>
-    <atmosphere type="adiabatic">
-    <physics name="default_physics" default="0" type="ode">
+    <atmosphere type='adiabatic'/>
+    <physics name='default_physics' default='0' type='ode'>
       <max_step_size>0.001</max_step_size>
       <real_time_factor>1</real_time_factor>
       <real_time_update_rate>1000</real_time_update_rate>
@@ -81,9 +80,9 @@
       <elevation>0</elevation>
       <heading_deg>0</heading_deg>
     </spherical_coordinates>
-    <model name="unit_box_0_0">
-      <pose frame="">-3.86241 5.85746 0.5 0 -0 0</pose>
-      <link name="link">
+    <model name='unit_box_0_0'>
+      <pose frame=''>-3.86241 5.85746 0.5 0 -0 0</pose>
+      <link name='link'>
         <inertial>
           <mass>1</mass>
           <inertia>
@@ -95,7 +94,7 @@
             <izz>0.166667</izz>
           </inertia>
         </inertial>
-        <collision name="collision">
+        <collision name='collision'>
           <geometry>
             <box>
               <size>1 1 1</size>
@@ -104,18 +103,18 @@
           <max_contacts>10</max_contacts>
           <surface>
             <contact>
-              <ode>
-            </ode></contact>
-            <bounce>
+              <ode/>
+            </contact>
+            <bounce/>
             <friction>
               <torsional>
-                <ode>
-              </ode></torsional>
-              <ode>
-            </ode></friction>
-          </bounce></surface>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
         </collision>
-        <visual name="visual">
+        <visual name='visual'>
           <geometry>
             <box>
               <size>1 1 1</size>
@@ -131,11 +130,11 @@
         <self_collide>0</self_collide>
         <kinematic>0</kinematic>
         <gravity>1</gravity>
-      
+      </link>
     </model>
-    <model name="unit_sphere_0">
-      <pose frame="">-5.306 9.05196 0.5 0 -0 0</pose>
-      <link name="link">
+    <model name='unit_sphere_0'>
+      <pose frame=''>-5.306 9.05196 0.5 0 -0 0</pose>
+      <link name='link'>
         <inertial>
           <mass>1</mass>
           <inertia>
@@ -147,7 +146,7 @@
             <izz>0.1</izz>
           </inertia>
         </inertial>
-        <collision name="collision">
+        <collision name='collision'>
           <geometry>
             <sphere>
               <radius>0.5</radius>
@@ -156,18 +155,18 @@
           <max_contacts>10</max_contacts>
           <surface>
             <contact>
-              <ode>
-            </ode></contact>
-            <bounce>
+              <ode/>
+            </contact>
+            <bounce/>
             <friction>
               <torsional>
-                <ode>
-              </ode></torsional>
-              <ode>
-            </ode></friction>
-          </bounce></surface>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
         </collision>
-        <visual name="visual">
+        <visual name='visual'>
           <geometry>
             <sphere>
               <radius>0.5</radius>
@@ -183,10 +182,10 @@
         <self_collide>0</self_collide>
         <kinematic>0</kinematic>
         <gravity>1</gravity>
-      
+      </link>
     </model>
-    <light name="user_spot_light_0" type="spot">
-      <pose frame="">-4.99505 8.00434 1 0 -0 0</pose>
+    <light name='user_spot_light_0' type='spot'>
+      <pose frame=''>-4.99505 8.00434 1 0 -0 0</pose>
       <diffuse>0.5 0.5 0.5 1</diffuse>
       <specular>0.1 0.1 0.1 1</specular>
       <direction>0 0 -1</direction>
@@ -203,9 +202,9 @@
         <falloff>1</falloff>
       </spot>
     </light>
-    <model name="unit_box_0_1">
-      <pose frame="">-2.85818 5.86765 0.5 0 -0 0</pose>
-      <link name="link">
+    <model name='unit_box_0_1'>
+      <pose frame=''>-2.85818 5.86765 0.5 0 -0 0</pose>
+      <link name='link'>
         <inertial>
           <mass>1</mass>
           <inertia>
@@ -217,7 +216,7 @@
             <izz>0.166667</izz>
           </inertia>
         </inertial>
-        <collision name="collision">
+        <collision name='collision'>
           <geometry>
             <box>
               <size>1 1 1</size>
@@ -226,18 +225,18 @@
           <max_contacts>10</max_contacts>
           <surface>
             <contact>
-              <ode>
-            </ode></contact>
-            <bounce>
+              <ode/>
+            </contact>
+            <bounce/>
             <friction>
               <torsional>
-                <ode>
-              </ode></torsional>
-              <ode>
-            </ode></friction>
-          </bounce></surface>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
         </collision>
-        <visual name="visual">
+        <visual name='visual'>
           <geometry>
             <box>
               <size>1 1 1</size>
@@ -253,11 +252,11 @@
         <self_collide>0</self_collide>
         <kinematic>0</kinematic>
         <gravity>1</gravity>
-      
+      </link>
     </model>
-    <model name="unit_cylinder_0">
-      <pose frame="">0.022799 3.0502 0.5 0 -0 0</pose>
-      <link name="link">
+    <model name='unit_cylinder_0'>
+      <pose frame=''>0.022799 3.0502 0.5 0 -0 0</pose>
+      <link name='link'>
         <inertial>
           <mass>1</mass>
           <inertia>
@@ -269,7 +268,7 @@
             <izz>0.125</izz>
           </inertia>
         </inertial>
-        <collision name="collision">
+        <collision name='collision'>
           <geometry>
             <cylinder>
               <radius>0.5</radius>
@@ -279,18 +278,18 @@
           <max_contacts>10</max_contacts>
           <surface>
             <contact>
-              <ode>
-            </ode></contact>
-            <bounce>
+              <ode/>
+            </contact>
+            <bounce/>
             <friction>
               <torsional>
-                <ode>
-              </ode></torsional>
-              <ode>
-            </ode></friction>
-          </bounce></surface>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
         </collision>
-        <visual name="visual">
+        <visual name='visual'>
           <geometry>
             <cylinder>
               <radius>0.5</radius>
@@ -307,77 +306,76 @@
         <self_collide>0</self_collide>
         <kinematic>0</kinematic>
         <gravity>1</gravity>
-      
+      </link>
     </model>
-    <state world_name="default">
+    <state world_name='default'>
       <sim_time>341 2000000</sim_time>
       <real_time>342 471160849</real_time>
       <wall_time>1598116642 583999727</wall_time>
       <iterations>341002</iterations>
-      <model name="ground_plane">
-        <pose frame="">0 0 0 0 -0 0</pose>
+      <model name='ground_plane'>
+        <pose frame=''>0 0 0 0 -0 0</pose>
         <scale>1 1 1</scale>
-        <link name="link">
-          <pose frame="">0 0 0 0 -0 0</pose>
+        <link name='link'>
+          <pose frame=''>0 0 0 0 -0 0</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
-        
+        </link>
       </model>
-      <model name="unit_box_0_0">
-        <pose frame="">-3.86241 5.85747 0.499995 -1e-05 0 0</pose>
+      <model name='unit_box_0_0'>
+        <pose frame=''>-3.86241 5.85747 0.499995 -1e-05 0 0</pose>
         <scale>1 1 1</scale>
-        <link name="link">
-          <pose frame="">-3.86241 5.85747 0.499995 -1e-05 0 0</pose>
+        <link name='link'>
+          <pose frame=''>-3.86241 5.85747 0.499995 -1e-05 0 0</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0.004709 0.011055 -9.78158 -0.022108 0.009414 1e-06</acceleration>
           <wrench>0.004709 0.011055 -9.78158 0 -0 0</wrench>
-        
+        </link>
       </model>
-      <model name="unit_box_0_1">
-        <pose frame="">-2.85818 5.86766 0.499995 -1e-05 0 0</pose>
+      <model name='unit_box_0_1'>
+        <pose frame=''>-2.85818 5.86766 0.499995 -1e-05 0 0</pose>
         <scale>1 1 1</scale>
-        <link name="link">
-          <pose frame="">-2.85818 5.86766 0.499995 -1e-05 0 0</pose>
+        <link name='link'>
+          <pose frame=''>-2.85818 5.86766 0.499995 -1e-05 0 0</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0.004709 0.011055 -9.78158 -0.022108 0.009414 1e-06</acceleration>
           <wrench>0.004709 0.011055 -9.78158 0 -0 0</wrench>
-        
+        </link>
       </model>
-      <model name="unit_cylinder_0">
-        <pose frame="">0.022801 3.0502 0.499997 3e-06 4e-06 -0</pose>
+      <model name='unit_cylinder_0'>
+        <pose frame=''>0.022801 3.0502 0.499997 3e-06 4e-06 -0</pose>
         <scale>1 1 1</scale>
-        <link name="link">
-          <pose frame="">0.022801 3.0502 0.499997 3e-06 4e-06 -0</pose>
+        <link name='link'>
+          <pose frame=''>0.022801 3.0502 0.499997 3e-06 4e-06 -0</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 -9.8 0 -0 0</acceleration>
           <wrench>0 0 -9.8 0 -0 0</wrench>
-        
+        </link>
       </model>
-      <model name="unit_sphere_0">
-        <pose frame="">-5.306 9.05196 0.5 0 -0 0</pose>
+      <model name='unit_sphere_0'>
+        <pose frame=''>-5.306 9.05196 0.5 0 -0 0</pose>
         <scale>1 1 1</scale>
-        <link name="link">
-          <pose frame="">-5.306 9.05196 0.5 0 -0 0</pose>
+        <link name='link'>
+          <pose frame=''>-5.306 9.05196 0.5 0 -0 0</pose>
           <velocity>0 0 0 0 -0 0</velocity>
           <acceleration>0 0 0 0 -0 0</acceleration>
           <wrench>0 0 0 0 -0 0</wrench>
-        
+        </link>
       </model>
-      <light name="sun">
-        <pose frame="">0 0 10 0 -0 0</pose>
+      <light name='sun'>
+        <pose frame=''>0 0 10 0 -0 0</pose>
       </light>
-      <light name="user_spot_light_0">
-        <pose frame="">-4.99505 8.00434 1 0 -0 0</pose>
+      <light name='user_spot_light_0'>
+        <pose frame=''>-4.99505 8.00434 1 0 -0 0</pose>
       </light>
     </state>
-    <gui fullscreen="0">
-      <camera name="user_camera">
-        <pose frame="">-2.68268 -18.2543 17.3205 0 0.657797 1.71938</pose>
+    <gui fullscreen='0'>
+      <camera name='user_camera'>
+        <pose frame=''>-2.68268 -18.2543 17.3205 0 0.657797 1.71938</pose>
         <view_controller>orbit</view_controller>
         <projection_type>perspective</projection_type>
       </camera>
     </gui>
-  </atmosphere></world>
+  </world>
 </sdf>
-</body></html>

@@ -171,6 +171,8 @@
   </joint>
 
     <gazebo reference="passive_wheel">
+      <mu1>0</mu1>
+      <mu2>0</mu2>
       <material>Gazebo/Green</material>
     </gazebo>
 

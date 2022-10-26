@@ -79,6 +79,7 @@ def calculate_publish_odom_msg(robot_linear_velocity, robot_anglar_velocity, tim
     odom_msg.pose.pose.orientation.y = quaternion[1]
     odom_msg.pose.pose.orientation.z = quaternion[2]
     odom_msg.pose.pose.orientation.w = quaternion[3]
+    rospy.loginfo(odom_msg.pose)
 
 
     #odom_broadcaster.sendTransform(
@@ -87,7 +88,7 @@ def calculate_publish_odom_msg(robot_linear_velocity, robot_anglar_velocity, tim
     #    time_header,
     #   "base_link",
     #    "odom"
-    #)
+#)
 
     #publish
     pub_odom.publish(odom_msg)
@@ -112,6 +113,10 @@ def callback_encoder_listener(data):
     #ticks
     global previous_left_counter
     global previous_right_counter 
+    if (counter == 1):
+        previous_left_counter = current_left_counter
+        previous_right_counter = current_right_counter
+
     left_since = calculate_ticks_since(previous_left_counter, current_left_counter)
     right_since = calculate_ticks_since(current_right_counter, previous_right_counter) #reversed movement
 
@@ -127,9 +132,10 @@ def callback_encoder_listener(data):
     robot_linear_velocity = (left_linear_velocity + right_linear_velocity) / 2
 
     #rotational velocity robot wz
-    robot_anglar_velocity = (right_linear_velocity - left_linear_velocity) / 0.08
+    robot_anglar_velocity = (right_linear_velocity - left_linear_velocity) / 0.2
 
     calculate_publish_odom_msg(robot_linear_velocity, robot_anglar_velocity, time_since, time, time_header)
+    
 
     #rospy.loginfo('%s - %s', left_angual_velocity, right_angual_velocity)
     #rospy.loginfo('%s', current_right_counter)
@@ -172,9 +178,28 @@ if __name__ == '__main__':
     odom_msg.header.frame_id = "odom"
     odom_msg.child_frame_id = "base_link"
 
+        #Twist
+    linear_v = Vector3(0, 0, 0)
+    angular_v = Vector3(0, 0, 0)
+    odom_msg.twist.twist.linear = linear_v #twist linear velocity in base_link (r) frame
+    odom_msg.twist.twist.angular = angular_v #twist angular velocity in base_link (r) frame
+    odom_msg.pose.pose.position.x = 0
+    odom_msg.pose.pose.position.y = 0
+    odom_msg.pose.pose.position.z = 0
+    quaternion = Quaternion()
+    quaternion = tf.transformations.quaternion_from_euler(0, 0, 0) #yaw is theta???
+    #https://gist.github.com/atotto/f2754f75bedb6ea56e3e0264ec405dcf
+    odom_msg.pose.pose.orientation.x = quaternion[0]
+    odom_msg.pose.pose.orientation.y = quaternion[1]
+    odom_msg.pose.pose.orientation.z = quaternion[2]
+    odom_msg.pose.pose.orientation.w = quaternion[3]
+    pub_odom.publish(odom_msg)
+
+
     #init pose
     x = 0
     y = 0
+    z = 0
     theta_k = 0
     counter = 0
 
