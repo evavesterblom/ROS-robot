@@ -30,7 +30,9 @@
 
  <node pkg="ias0220_224772" name="encoders_node" type="encoders_node.py"/>
 
+ <!--x
  <node pkg="ias0220_224772" name="odometer_encoder" type="odometer_encoder.py"/>
+ -->
 
  <node pkg="tf" type="static_transform_publisher" name="odom_to_map" args="0 0  0  0 0 0  /map /odom 100" />
 

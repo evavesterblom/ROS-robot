@@ -27,7 +27,7 @@
     <remap from="cmd_vel" to="/diff_drive_controller/cmd_vel"/>
   </node>
 
- <node name="rviz" pkg="rviz" type="rviz" args="--display-config $(find ias0220_224772)/config/differential_robot.rviz" />
+ <node name="rviz" pkg="rviz" type="rviz" args="--display-config $(find ias0220_224772)/config/differential_robot2.rviz" />
  <node name="rqt_graph" pkg="rqt_graph" type="rqt_graph"/>
 
 
