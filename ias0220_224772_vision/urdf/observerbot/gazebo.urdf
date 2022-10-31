@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="Differential Robot">
+
+    <gazebo reference="base_link">
+        <material>Gazebo/Red</material>
+    </gazebo>
+
+    <gazebo reference="head">
+        <material>Gazebo/Blue</material>
+    </gazebo>
+
+    <gazebo reference="passive_wheel_holder">
+        <material>Gazebo/White</material>
+    </gazebo>
+
+    <gazebo reference="passive_wheel">
+        <mu1 value="0"/>
+        <mu2 value="0"/>
+        <material>Gazebo/White</material>
+    </gazebo>
+
+    <gazebo>
+        <static>true</static>
+        <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+            <robotNamespace>/observerbot</robotNamespace>
+        </plugin>
+    </gazebo>
+</robot>
