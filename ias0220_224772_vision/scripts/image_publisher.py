@@ -9,20 +9,17 @@ class ImagePublisher():
     def __init__(self):
         self.fileDir = os.path.dirname(os.path.abspath(__file__))
         self.dir = os.path.abspath(os.path.join(self.fileDir, os.pardir)) + '/data/images/'
-        self.imageDir = self.dir
-        self.image = Image()
         self.bridge = CvBridge()
-        self.imgMsg = None
         self.rate = rospy.Rate(2)
         self.publisher = rospy.Publisher("/image_raw", Image, queue_size=100)   
 
     def publish_image(self, counter):
-        self.imageDir = self.dir + 'img_' + f'{counter:04d}' + '.png'
-        self.image = cv2.imread(self.imageDir)
-        self.imgMsg = self.bridge.cv2_to_imgmsg(self.image, "bgr8")
-        self.imgMsg.header.frame_id = 'camera'
-        self.publisher.publish(self.imgMsg)
-        rospy.loginfo(self.imageDir + ' was sent to /image_raw')   
+        imageDir = self.dir + 'img_' + f'{counter:04d}' + '.png'
+        image = cv2.imread(imageDir)
+        imgMsg = self.bridge.cv2_to_imgmsg(image, "bgr8")
+        imgMsg.header.frame_id = 'camera'
+        self.publisher.publish(imgMsg)
+        rospy.loginfo(imageDir + ' was sent to /image_raw')  
         pass
 
     def run(self):
