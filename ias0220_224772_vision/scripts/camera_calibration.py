@@ -21,7 +21,7 @@ def run(data):
         (rows,cols,channels) = msg.shape
         d.append(msg)
         rospy.loginfo('Collect /image_raw and save image %s', counter)
-        if counter == 3:
+        if counter == 37:
             counter = 0
             state = 'Calibrate'
 
@@ -44,8 +44,8 @@ def run(data):
                 corners2 = cv2.cornerSubPix(gray, corners, (11,11), (-1,-1), criteria)
                 imgpoints.append(corners2)
                 img = cv2.drawChessboardCorners(img, (7,6), corners2, ret)
-                cv2.imshow('img',img)
-                cv2.waitKey(500)
+                #cv2.imshow('img',img)
+                #cv2.waitKey(500)
                 pubImg = br.cv2_to_imgmsg(img, 'bgr8')
                 pubCorners.publish(pubImg)
                 rospy.loginfo('Calibrate cornersimage to /image_processed')
@@ -54,6 +54,7 @@ def run(data):
   
         tot_error=0
         total_points=0
+        mean_error = 0
         for i in range(len(objpoints)):
             reprojected_points, _ = cv2.projectPoints(objpoints[i], rvecs[i], tvecs[i], mtx, dist)
             tot_error+=np.sum(np.abs(imgpoints[i]-reprojected_points)**2)
@@ -64,11 +65,7 @@ def run(data):
         d.clear()
 
     #PUBLISH CAMERA INFO
-   #[float(np_float) for np_float in dist.tolist()]
-  
-
     if state == 'Publish':
-
         ci = CameraInfo()
         ci.header.stamp = rospy.Time.now()
         ci.header.frame_id = 'camera'
@@ -83,7 +80,9 @@ def run(data):
         ci.P = P.flatten().tolist() #intrinsic
 
         pubCamera.publish(ci)
+        rospy.loginfo('Publish camera info to /camera_info')
         state = 'Collect'
+        rospy.loginfo('')
 
 def listen():
     rospy.Subscriber("/image_raw", Image, run, queue_size=1)
