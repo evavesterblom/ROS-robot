@@ -11,6 +11,8 @@ def run(data):
     global counter
     global image_list
     global d
+    global dist
+    global mtx
     #COLLECT
     if state == 'Collect':
         counter += 1
@@ -19,7 +21,7 @@ def run(data):
         (rows,cols,channels) = msg.shape
         d.append(msg)
         rospy.loginfo('Collect /image_raw and save image %s', counter)
-        if counter == 37:
+        if counter == 3:
             counter = 0
             state = 'Calibrate'
 
@@ -42,13 +44,14 @@ def run(data):
                 corners2 = cv2.cornerSubPix(gray, corners, (11,11), (-1,-1), criteria)
                 imgpoints.append(corners2)
                 img = cv2.drawChessboardCorners(img, (7,6), corners2, ret)
-                #cv2.imshow('img',img)
-                #cv2.waitKey(500)
+                cv2.imshow('img',img)
+                cv2.waitKey(500)
                 pubImg = br.cv2_to_imgmsg(img, 'bgr8')
                 pubCorners.publish(pubImg)
                 rospy.loginfo('Calibrate cornersimage to /image_processed')
+
         ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.shape[::-1], None, None)
-    
+  
         tot_error=0
         total_points=0
         for i in range(len(objpoints)):
@@ -58,11 +61,29 @@ def run(data):
         mean_error=np.sqrt(tot_error/total_points)
         rospy.loginfo('Mean error  %s', mean_error)
         state = 'Publish'
+        d.clear()
 
-    #PUBLISH
+    #PUBLISH CAMERA INFO
+   #[float(np_float) for np_float in dist.tolist()]
+  
+
     if state == 'Publish':
-        #rospy.loginfo('DONE')
-        pass
+
+        ci = CameraInfo()
+        ci.header.stamp = rospy.Time.now()
+        ci.header.frame_id = 'camera'
+        ci.width = 1920
+        ci.height = 1080
+        ci.distortion_model = 'plumb_bob'
+        ci.D = dist[0].tolist()
+        ci.K = mtx.flatten().tolist() #intrinsic
+        
+        zeros = np.zeros((3,1), dtype=float)
+        P = np.append(mtx, zeros, axis=1)
+        ci.P = P.flatten().tolist() #intrinsic
+
+        pubCamera.publish(ci)
+        state = 'Collect'
 
 def listen():
     rospy.Subscriber("/image_raw", Image, run, queue_size=1)
@@ -76,6 +97,8 @@ if __name__ == '__main__':
     rospy.init_node('camera_calibration')
     pubCorners = rospy.Publisher("/image_processed", Image, queue_size=100) 
     pubCamera = rospy.Publisher("/camera_info", CameraInfo, queue_size=100)
+    global dist
+    global mtx
     listen()
 
 
