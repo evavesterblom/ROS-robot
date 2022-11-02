@@ -1,7 +1,7 @@
 <launch>
 
     <arg name="world_name" value="$(find ias0220_224772_vision)/worlds/mvt.world" />
-    <arg name="rviz_config" default="$(find ias0220_224772_vision)/config/mvt_rviz.rviz" />
+    <arg name="rviz_config" value="$(find ias0220_224772_vision)/config/task5_part2_224772.rviz" />
     <rosparam command="load" file="$(find ias0220_224772_vision)/config/controllers.yaml"  />
 
     <!-- include other necessary launch files -->

@@ -44,8 +44,6 @@ def run(data):
                 corners2 = cv2.cornerSubPix(gray, corners, (11,11), (-1,-1), criteria)
                 imgpoints.append(corners2)
                 img = cv2.drawChessboardCorners(img, (7,6), corners2, ret)
-                #cv2.imshow('img',img)
-                #cv2.waitKey(500)
                 pubImg = br.cv2_to_imgmsg(img, 'bgr8')
                 pubCorners.publish(pubImg)
                 rospy.loginfo('Calibrate cornersimage to /image_processed')
@@ -65,21 +63,17 @@ def run(data):
     #PUBLISH CAMERA INFO
     if state == 'Publish':
         global ci
-        #ci = CameraInfo()
         ci.header.stamp = rospy.Time.now()
         ci.header.frame_id = 'camera'
         ci.width = 1920
         ci.height = 1080
         ci.distortion_model = 'plumb_bob'
-        ##ci.D = dist[0].tolist()
         ci.D = dist.flatten()
-        #ci.K = mtx.flatten().tolist() #intrinsic
         ci.K = mtx.flatten()
         ci.R = np.eye(3).flatten()
-        
+    
         zeros = np.zeros((3,1), dtype=float)
         P = np.append(mtx, zeros, axis=1)
-        #ci.P = P.flatten().tolist() #intrinsic
         ci.P = P.flatten()
 
         pubCamera.publish(ci)
