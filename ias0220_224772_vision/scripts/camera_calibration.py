@@ -21,7 +21,7 @@ def run(data):
         (rows,cols,channels) = msg.shape
         d.append(msg)
         rospy.loginfo('Collect /image_raw and save image %s', counter)
-        if counter == 37:
+        if counter == 20:
             counter = 0
             state = 'Calibrate'
 
@@ -49,9 +49,7 @@ def run(data):
                 pubImg = br.cv2_to_imgmsg(img, 'bgr8')
                 pubCorners.publish(pubImg)
                 rospy.loginfo('Calibrate cornersimage to /image_processed')
-
         ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.shape[::-1], None, None)
-  
         tot_error=0
         total_points=0
         mean_error = 0
@@ -66,26 +64,39 @@ def run(data):
 
     #PUBLISH CAMERA INFO
     if state == 'Publish':
-        ci = CameraInfo()
+        global ci
+        #ci = CameraInfo()
         ci.header.stamp = rospy.Time.now()
         ci.header.frame_id = 'camera'
         ci.width = 1920
         ci.height = 1080
         ci.distortion_model = 'plumb_bob'
-        ci.D = dist[0].tolist()
-        ci.K = mtx.flatten().tolist() #intrinsic
+        ##ci.D = dist[0].tolist()
+        ci.D = dist.flatten()
+        #ci.K = mtx.flatten().tolist() #intrinsic
+        ci.K = mtx.flatten()
+        ci.R = np.eye(3).flatten()
         
         zeros = np.zeros((3,1), dtype=float)
         P = np.append(mtx, zeros, axis=1)
-        ci.P = P.flatten().tolist() #intrinsic
+        #ci.P = P.flatten().tolist() #intrinsic
+        ci.P = P.flatten()
 
         pubCamera.publish(ci)
         rospy.loginfo('Publish camera info to /camera_info')
-        state = 'Collect'
+        state = 'Loop'
         rospy.loginfo('')
 
+    #MAIN LOOP PUBLISHING CAMERA INFO
+    if state == 'Loop':
+        ci.header = data.header
+        pubCamera.publish(ci)
+        rospy.loginfo('Publish camera info to /camera_info LOOP')
+        global rate
+        rate.sleep()
+
 def listen():
-    rospy.Subscriber("/image_raw", Image, run, queue_size=1)
+    rospy.Subscriber("/image_raw", Image, run, queue_size=10)
     rospy.spin()
 
 if __name__ == '__main__':
@@ -98,6 +109,9 @@ if __name__ == '__main__':
     pubCamera = rospy.Publisher("/camera_info", CameraInfo, queue_size=100)
     global dist
     global mtx
+    global ci
+    ci = CameraInfo()
+    rate = rospy.Rate(2)
     listen()
 
 

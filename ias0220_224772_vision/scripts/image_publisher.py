@@ -18,6 +18,7 @@ class ImagePublisher():
         image = cv2.imread(imageDir)
         imgMsg = self.bridge.cv2_to_imgmsg(image, "bgr8")
         imgMsg.header.frame_id = 'camera'
+        imgMsg.header.stamp = rospy.Time.now()
         self.publisher.publish(imgMsg)
         rospy.loginfo(imageDir + ' was sent to /image_raw')  
         pass
