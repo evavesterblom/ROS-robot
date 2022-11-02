@@ -13,40 +13,40 @@ def run(data):
     global d
     global dist
     global mtx
+
     #COLLECT
     if state == 'Collect':
         counter += 1
         br =  CvBridge()
-        msg = br.imgmsg_to_cv2(data)
-        (rows,cols,channels) = msg.shape
-        d.append(msg)
-        rospy.loginfo('Collect /image_raw and save image %s', counter)
-        if counter == 20:
+        img = br.imgmsg_to_cv2(data)
+        if counter == 37:
             counter = 0
             state = 'Calibrate'
 
-    #CALIBRATE
-    if state == 'Calibrate':
         squareSize = 0.108
         objp = np.zeros((6*7,3), np.float32)
         objp[:,:2] = np.mgrid[0:7,0:6].T.reshape(-1,2) * squareSize
-        
+    
         objpoints = [] # 3d point in real world space Arrays to store object points and image points from all the images.
         imgpoints = [] # 2d points in image plane.
        
         criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)  # termination criteria
-        for img in d:
-            gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) # convert image from color to gray scale
-            ret, corners = cv2.findChessboardCorners(gray, (7,6), None) # Find the chess board corners using corner detection algorithm
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY) # convert image from color to gray scale
+        ret, corners = cv2.findChessboardCorners(gray, (7,6), None) # Find the chess board corners using corner detection algorithm
 
-            if ret == True: # If found, add object points, image points (after refining them)
-                objpoints.append(objp)
-                corners2 = cv2.cornerSubPix(gray, corners, (11,11), (-1,-1), criteria)
-                imgpoints.append(corners2)
-                img = cv2.drawChessboardCorners(img, (7,6), corners2, ret)
-                pubImg = br.cv2_to_imgmsg(img, 'bgr8')
-                pubCorners.publish(pubImg)
-                rospy.loginfo('Calibrate cornersimage to /image_processed')
+        if ret == True: # If found, add object points, image points (after refining them)
+            objpoints.append(objp)
+            corners2 = cv2.cornerSubPix(gray, corners, (11,11), (-1,-1), criteria)
+            imgpoints.append(corners2)
+            img = cv2.drawChessboardCorners(img, (7,6), corners2, ret)
+            pubImg = br.cv2_to_imgmsg(img, 'bgr8')
+            pubCorners.publish(pubImg)
+            rospy.loginfo('Collect %s /image_raw + cornersimage to /image_processed', counter)
+
+    #CALIBRATE
+    if state == 'Calibrate':
+        rospy.loginfo(' ')
+        rospy.loginfo('Start calibration')
         ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.shape[::-1], None, None)
         tot_error=0
         total_points=0
@@ -78,6 +78,8 @@ def run(data):
 
         pubCamera.publish(ci)
         rospy.loginfo('Publish camera info to /camera_info')
+        rospy.loginfo('Calibration done')
+        rospy.loginfo(' ')
         state = 'Loop'
         rospy.loginfo('')
 
@@ -85,7 +87,7 @@ def run(data):
     if state == 'Loop':
         ci.header = data.header
         pubCamera.publish(ci)
-        rospy.loginfo('Publish camera info to /camera_info LOOP')
+        rospy.loginfo('Subscribe to /image_raw, add camera info to /camera_info')
         global rate
         rate.sleep()
 
