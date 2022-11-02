@@ -14,7 +14,7 @@ def run(data):
     global dist
     global mtx
 
-    #COLLECT
+    #COLLECT IMAGE BY IMAGE
     if state == 'Collect':
         counter += 1
         br =  CvBridge()
