@@ -29,13 +29,13 @@ class ObjectRecognizer():
         
         #all contours
         cv2.drawContours(allContoursImage, contoursAll, -1, (0, 255, 0), 3)
-        allContoursImg = self.br.cv2_to_imgmsg(allContoursImage, "bgr8")
+        allContoursImg = self.br.cv2_to_imgmsg(allContoursImage, "rgb8")
         self.publishAllContours.publish(allContoursImg) 
 
         #biggest contour
         c = max(contoursAll, key = cv2.contourArea)
         cv2.drawContours(biggestContourImage, c, -1, (255,0,0),10)
-        biggestContourImg = self.br.cv2_to_imgmsg(biggestContourImage, "bgr8")
+        biggestContourImg = self.br.cv2_to_imgmsg(biggestContourImage, "rgb8")
         self.publishBiggestContour.publish(biggestContourImg)
 
         #detect robot
@@ -52,7 +52,7 @@ class ObjectRecognizer():
         #draw rectangle around robot
         (x,y,w,h) = cv2.boundingRect(cMaxRobot)
         cv2.rectangle(img_bgr,(x,y),(x+w,y+h),(255,55,66), 3)
-        trackingRobotImg = self.br.cv2_to_imgmsg(img_bgr, "bgr8")
+        trackingRobotImg = self.br.cv2_to_imgmsg(img_bgr, "rgb8")
         self.publishRobotTracker.publish(trackingRobotImg)
 
         rospy.loginfo('Listening to /image_raw + detecting moving robot')  

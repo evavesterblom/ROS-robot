@@ -1,0 +1,8 @@
+<launch>
+
+    <!-- launch the serial interface node that will publish the incoming imu data as ROS messages -->
+    <node pkg="ias0220_sensors" name="serial_interface" type="serial_interface.py" output="screen" args="/dev/ttyUSB0" />
+
+    
+</launch>
+
