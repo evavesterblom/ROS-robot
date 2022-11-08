@@ -1,0 +1,18 @@
+<launch>
+
+       <!-- launch the serial interface node that will publish the incoming imu data as ROS messages -->
+    <node pkg="ias0220_224772_sensor" name="serial_interface" type="serial_interface.py" output="screen" args="/dev/ttyUSB0" />
+    
+        <!-- play back messages from bag file -->
+    <arg name = "bag_directory" default="$(find ias0220_sensors)/bags/" />
+    <arg name = "filename" default="recorded.bag" />
+
+    <!-- rosbag node records (all or topic?) -->
+    <node pkg="rosbag" type="record" name="recorder" output="screen" args="-o $(arg bag_directory)$(arg filename)"/>
+
+    <node pkg="tf" type="static_transform_publisher" name="imu_link" args="0 0  0  0 0 0  /map /imu_link" />
+
+
+
+</launch>
+
