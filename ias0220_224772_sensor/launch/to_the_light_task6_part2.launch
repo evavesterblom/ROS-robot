@@ -1,5 +1,4 @@
-  
-  <!-- Launching a simulation with recorded input data,
+  <!-- Launching a simulation with on-line input data,
   which will move my robot in Gazebo using my steering node
   In gazebo, we spawn the robot using controller spawner
   -->
@@ -9,13 +8,6 @@
             <arg name="model" value="'$(find ias0220_224772_sensor)/urdf/differential_robot_task6.urdf'" />  
     </include>
 
-    <!-- play back messages from bag file -->
-    <arg name = "bag_directory" default="$(find ias0220_224772_sensor)/bags/" />
-    <arg name = "filename" default="shortBag.bag" />
-
-    <!-- rosbag node republishes messages on a loop -->
-    <node pkg="rosbag" type="play" name="player" args="-l $(arg bag_directory)$(arg filename)"/>
-    
     <rosparam command="load"
                 file="$(find ias0220_224772_sensor)/config/joints.yaml"
                 ns="joint_state_controller" />
@@ -29,6 +21,17 @@
         args="joint_state_controller
             diff_drive_controller"/>
 
-     <node pkg="ias0220_224772_sensor" name="steering_node" type="steering_node.py" output="screen"/>
+    <node pkg="ias0220_224772_sensor" name="steering_node" type="steering_node.py" output="screen"/>
+
+    <!-- launch the serial interface node that will publish the incoming imu data as ROS messages -->
+    <node pkg="ias0220_224772_sensor" name="serial_interface" type="serial_interface.py" args="/dev/ttyUSB0" />
+
+    <node pkg="tf" type="static_transform_publisher" name="imu_link" args="0 0 0 0 0 0 0  /map /imu_link" />
+
+    <!-- record messages only selected topics bag file -->
+    <arg name = "bag_directory" default="$(find ias0220_224772_sensor)/bags/" />
+    <arg name = "filename" default="rosbag_to_light.bag" />
+    <node pkg="rosbag" type="record" name="recorder" args="-a -O $(arg bag_directory)$(arg filename)"/>
+
 
 </launch>
