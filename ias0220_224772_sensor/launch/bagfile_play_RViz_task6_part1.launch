@@ -1,3 +1,6 @@
+<!-- Plays the recorded bag file and starts RViz using the saved configuration, 
+so it displays the IMU data while playing the bagfile. -->
+
 <launch>
 
     <!-- play back messages from bag file -->
@@ -7,7 +10,7 @@
     <!-- rosbag node republishes messages on a loop -->
     <node pkg="rosbag" type="play" name="player" output="screen" args="-l $(arg bag_directory)$(arg filename)"/>
 
-    <!-- place your code here to launch an rviz node for visualizing IMU data... --> 
+    <!-- launch a rviz node for visualizing IMU data --> 
     <node name="rviz" pkg="rviz" type="rviz" args="--display-config $(find ias0220_224772_sensor)/config/task6-1.rviz" />
 </launch>
 

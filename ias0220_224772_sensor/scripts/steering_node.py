@@ -42,3 +42,8 @@ if __name__ == '__main__':
     rospy.init_node('steering_node')
     ob = SteeringNode()
     rospy.spin()
+
+
+#Add here the distance checking. 
+# If distance 0-20 - max speed is 1
+# If distance 20 - X - max speed is 2
