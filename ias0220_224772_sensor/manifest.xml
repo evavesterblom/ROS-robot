@@ -1,0 +1,12 @@
+<package>
+  <description brief="ias0220_224772_sensor">
+
+     ias0220_224772_sensor
+
+  </description>
+  <author>deni</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/ias0220_224772_sensor</url>
+
+</package>

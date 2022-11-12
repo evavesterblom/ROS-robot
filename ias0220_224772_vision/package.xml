@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package format="2">
+
+  <name>ias0220_224772_vision</name>
+  <version>0.0.1</version>
+  <description>Machine Vision Part 2 Assignment for IAS0220 (Robot Guidance and Software)</description>
+  <maintainer email="fegaeze@gmail.com">Chioma Nkem-Eze</maintainer>
+  <license>MIT</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>rospy</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>gazebo_ros</build_depend>
+  
+  <exec_depend>rospy</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>gazebo_ros</exec_depend>
+
+</package>

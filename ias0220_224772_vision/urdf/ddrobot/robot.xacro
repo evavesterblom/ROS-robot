@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="ddrobot">
+
+    <xacro:include filename="$(find ias0220_224772_vision)/urdf/ddrobot/xacro/chasis.xacro"/>
+    <xacro:include filename="$(find ias0220_224772_vision)/urdf/ddrobot/xacro/wheels.xacro"/>
+    <xacro:include filename="$(find ias0220_224772_vision)/urdf/ddrobot/xacro/gazebo.xacro"/>
+    <xacro:include filename="$(find ias0220_224772_vision)/urdf/ddrobot/xacro/materials.xacro"/>
+
+    <!-- Robot Base Footprint -->
+    <link name="base_footprint"></link>
+
+    <!-- Robot Chasis -->
+    <xacro:chasis />
+
+    <!-- Robot Wheels -->
+    <xacro:wheel side="right" position="front" offset_x="${chasis_length/2 - 0.1}" offset_y="${-(chasis_width/2 + 0.05)}" />
+    <xacro:wheel side="left" position="front" offset_x="${chasis_length/2 - 0.1}" offset_y="${chasis_width/2 + 0.05}" />
+    <xacro:wheel side="right" position="back" offset_x="${-(chasis_length/2 - 0.1)}" offset_y="${-(chasis_width/2 + 0.05)}" />
+    <xacro:wheel side="left" position="back" offset_x="${-(chasis_length/2 - 0.1)}" offset_y="${chasis_width/2 + 0.05}" />
+
+</robot>

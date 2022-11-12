@@ -1,0 +1,8 @@
+<launch>
+ 
+ <include file="$(find ias0220_224772_vision)/launch/mvt_main.launch">
+ </include>
+
+ <node name="object_recognition" pkg="ias0220_224772_vision" type="object_recognition.py" output="screen"/>
+
+</launch>
