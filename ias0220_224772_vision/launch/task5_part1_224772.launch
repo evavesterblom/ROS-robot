@@ -1,0 +1,6 @@
+<launch>
+ <node pkg="ias0220_224772_vision" name="camera_calibration" type="camera_calibration.py" output="screen"/>
+ <node pkg="ias0220_224772_vision" name="image_publisher" type="image_publisher.py"/>
+ <node name="image_proc" pkg="image_proc" type="image_proc" output="screen"/>
+ <node name="rviz" pkg="rviz" type="rviz" args="--display-config $(find ias0220_224772_vision)/config/task5_part1_224772.rviz" />
+</launch>

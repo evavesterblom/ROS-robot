@@ -1,0 +1,13 @@
+<launch>
+    <arg name="model" />
+    <arg name="init_pose" />
+    
+    <param name="robot_description" command="xacro '$(find ias0220_224772_vision)/urdf/$(arg model)/robot.xacro'" />
+
+    <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" respawn="false" 
+        args="$(arg init_pose) -urdf -model $(arg model) -param robot_description" />
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher">
+        <remap from="/joint_states" to="$(arg model)/joint_states" />
+    </node>
+    <node name="controller_spawner" pkg="controller_manager" type="spawner" args="--namespace=/$(arg model) joint_state_controller robot_velocity_controller" />
+</launch>
