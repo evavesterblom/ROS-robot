@@ -4,6 +4,7 @@ import rospy
 from sensor_msgs.msg import Imu
 from geometry_msgs.msg import Twist, Vector3
 from std_msgs.msg import Int16
+import numpy as np
 import tf_conversions
 import math
 
@@ -14,10 +15,10 @@ class SteeringNode():
         self.pub_twist = rospy.Publisher('/diff_drive_controller/cmd_vel', Twist, queue_size=10)
         self.twist = Twist()
         self.rate = rospy.Rate(30) 
-        self.distance = Int16()
+        self.distance = 0
 
     def set_distance_callback(self, data):
-        self.distance = data
+        self.distance = data.data
 
     def calculate_vel_callback(self, data):
         quaternion = [data.orientation.x,data.orientation.y,data.orientation.z,data.orientation.w]
@@ -33,21 +34,22 @@ class SteeringNode():
         self.twist.linear = linear_velocity
         self.twist.angular = angular_velocity
 
-        rospy.loginfo('Info %s %s', pitch_deg, self.distance)
-
         self.pub_twist.publish(self.twist)
         self.rate.sleep()
-    
+
+    # If distance 0-20      - max speed is 1
+    # If distance 20-220    - max speed is 2
+    # If distance 220-...   - robot shoud not move
     def calculate_speed(self, deg):
-        #[0>0 - 90>2]
-        return deg / 45
+        if (self.distance <= 20): 
+            return deg / 90
+        elif (self.distance > 20 & self.distance <= 220):
+            return deg / 45
+        else:
+            return 0
 
 if __name__ == '__main__':
     rospy.init_node('steering_node')
     ob = SteeringNode()
     rospy.spin()
 
-
-#Add here the distance checking. 
-# If distance 0-20 - max speed is 1
-# If distance 20 - X - max speed is 2
