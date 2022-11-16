@@ -37,13 +37,13 @@ class SteeringNode():
         self.pub_twist.publish(self.twist)
         self.rate.sleep()
 
-    # If distance 0-20      - max speed is 1
-    # If distance 20-220    - max speed is 2
-    # If distance 220-...   - robot shoud not move
+    # If distance 0-20          - max speed is 1
+    # If distance 20-50         - max speed is 2
+    # If distance -1 or 50+     - robot shoud not move
     def calculate_speed(self, deg):
-        if (self.distance <= 20): 
+        if (self.distance >= 0 & self.distance <= 20): 
             return deg / 90
-        elif (self.distance > 20 & self.distance <= 220):
+        elif (self.distance > 20 & self.distance <= 50):
             return deg / 45
         else:
             return 0
