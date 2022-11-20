@@ -1,4 +1,4 @@
-  <!-- Launching a simulation with on-line input data,
+  <!-- Launching a simulation with bag data input data,
   which will move my robot in Gazebo using my steering node
   In gazebo, we spawn the robot using controller spawner
   -->
@@ -29,6 +29,4 @@
 
     <node pkg="rosbag" type="play" name="player" args="$(arg bag_directory)$(arg filename)"/>
     
-    <!-- <node pkg="tf" type="static_transform_publisher" name="imu_link" args="0 0 0 0 0 0 0  /map /imu_link" />
-    -->
 </launch>
