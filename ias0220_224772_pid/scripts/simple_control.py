@@ -20,10 +20,11 @@ You are also allowed to create more methods, or delete some.
 import math
 import rospy
 import numpy as np
-from geometry_msgs.msg import Twist, Point
+from geometry_msgs.msg import Twist, Point, Vector3
 from visualization_msgs.msg import MarkerArray, Marker
 from nav_msgs.msg import Odometry
 from tf.transformations import euler_from_quaternion
+import tf_conversions
 
 
 class PDController:
@@ -35,10 +36,8 @@ class PDController:
           used here (i.e., "controller_waypoints")"""
         self.Kd = rospy.get_param("/controller_waypoints/controller/Kd")
         self.Kp = rospy.get_param("/controller_waypoints/controller/Kp")
-        self.distance_margin = rospy.get_param(
-            "/controller_waypoints/mission/distance_margin")
-        self.waypoints = rospy.get_param(
-            "/controller_waypoints/mission/waypoints")
+        self.distance_margin = rospy.get_param("/controller_waypoints/mission/distance_margin")
+        self.waypoints = rospy.get_param("/controller_waypoints/mission/waypoints")
 
         # Print the parameters
         rospy.loginfo("Got static data from parameter server:")
@@ -62,22 +61,18 @@ class PDController:
         self.wpIndex = 0          # counts the visited waypoints
         self.position = Point()   # current position (3D vector: .x, .y, .z)
         self.heading = 0.0        # current orientation of robot (yaw [rad])
+
         self.done = False
         self.init = True
         self.vel_cmd = [0.0, 0.0]  # calculated velocities (linear, angular)
         # Publishers and subscribers
-        self.publisher_cmd_vel = rospy.Publisher(
-                                "/controller_diffdrive/cmd_vel",
-                                Twist, queue_size=10)
-        self.publisher_waypoints = rospy.Publisher(
-                                "/mission_control/waypoints",
-                                MarkerArray,
-                                queue_size=10)
+        self.publisher_cmd_vel = rospy.Publisher("/controller_diffdrive/cmd_vel",Twist, queue_size=10)
+        self.publisher_waypoints = rospy.Publisher("/mission_control/waypoints",MarkerArray,queue_size=10)
         rospy.Subscriber('odom', Odometry, self.onOdom)
         # Messages
         self.marker_array = None
-        self.twist = None
-    # Registering start time of this node
+        self.twist = Twist()
+        # Registering start time of this node
         self.startTime = 0
         while self.startTime == 0:
             self.startTime = rospy.Time.now().to_sec()
@@ -94,6 +89,7 @@ class PDController:
         @result: returns wrapped angle -Pi <= angle <= Pi
         """
         #TODO: return the angle between -PI and PI
+        return 1.0
         
     def run(self):
         """
@@ -133,6 +129,7 @@ class PDController:
         @result: returns True if waypoint is reached, otherwise False
         """
         # TODO: Check if within distance_margin from waypoint
+        return False
 
     def controller(self):
         """
@@ -143,14 +140,23 @@ class PDController:
         """
         # Output 0 (skip all calculations) if the last waypoint was reached
         # TODO: Your code here
+        self.vel_cmd = [0.5, 0.5]
 
     def publish_vel_cmd(self):
         """
         Publishes command velocities computed by the control algorithm.
+        command = Kp e + Kd ed
+        e = Vector2(distance err, angle err)
+        ed = Vector2(vel change, angle change)
         @param: self
         @result: publish message
         """
         # TODO: Your code here
+        self.twist.linear = Vector3(self.vel_cmd[0], 0, 0)
+        self.twist.angular =  Vector3(0, 0, self.vel_cmd[1])
+        self.publisher_cmd_vel.publish(self.twist)
+ 
+
 
     def publish_waypoints(self):
         """
@@ -190,6 +196,16 @@ class PDController:
         """
         # Store odometry data
         # TODO: Your code here
+        # rospy.loginfo("This is odom msg %s", odom_msg)
+
+        prev_prosition = self.position
+        prev_heading = self.heading
+        current_goal = self.waypoints[0]
+
+        self.position = odom_msg.pose.pose.position
+        q = odom_msg.pose.pose.orientation
+        quaternion = [q.x,q.y,q.z,q.w]
+        _, _, self.heading = tf_conversions.transformations.euler_from_quaternion(quaternion)
 
         # Check if current target reached;
         #  set next one if necessary and possible
