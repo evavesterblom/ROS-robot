@@ -2,7 +2,6 @@
     
     <param name="robot_description" command="$(find xacro)/xacro '$(find ias0220_224772_pid)/urdf/robot.urdf'"/>
 
- 
     <rosparam command="load"
                 file="$(find ias0220_224772_pid)/config/simple_control_v2.yaml"
                 ns="controller_waypoints" />
@@ -14,7 +13,14 @@
     </node>
     <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher"/>
 
-    <node pkg="ias0220_224772_pid" name="simple_control" type="simple_control.py" output="screen"/>
+    <node pkg="ias0220_224772_pid" name="simple_control" type="simple_control.py" output="screen">
+     <remap from="/controller_diffdrive/cmd_vel" to="move/cmd_vel"/>
+    </node>
+
+    <node pkg="ias0220_224772" name="encoders_node" type="encoders_node.py"/>
+    <node pkg="ias0220_224772" name="odometer_encoder" type="odometer_encoder.py"/>
+
+    <node name="robot_mover" pkg="transform_frame" type="move"/>
 
 
 </launch>
