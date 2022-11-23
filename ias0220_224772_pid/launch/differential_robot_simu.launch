@@ -1,0 +1,20 @@
+<launch>
+    
+    <param name="robot_description" command="$(find xacro)/xacro '$(find ias0220_224772_pid)/urdf/robot.urdf'"/>
+
+ 
+    <rosparam command="load"
+                file="$(find ias0220_224772_pid)/config/simple_control_v2.yaml"
+                ns="controller_waypoints" />
+
+    <node name="rviz" pkg="rviz" type="rviz" args="--display-config '$(find ias0220_224772_pid)/config/robot.rviz'" />
+
+    <node pkg="robot_state_publisher" type="robot_state_publisher"  name="robot_state_publisher">
+        <param name="publish_frequency" type="double" value="50.0" />
+    </node>
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher"/>
+
+    <node pkg="ias0220_224772_pid" name="simple_control" type="simple_control.py" output="screen"/>
+
+
+</launch>
