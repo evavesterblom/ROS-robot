@@ -58,20 +58,31 @@ class PDController:
         rospy.loginfo("-----------------------------------------------------")
 
         # Initialization of class variables
+        self.term = 0
+
         self.wpIndex = 0          # counts the visited waypoints
         self.position = Point()   # current position (3D vector: .x, .y, .z)
         self.heading = 0.0        # current orientation of robot (yaw [rad])
+        self.time = rospy.Time.now().to_sec()
+
+        self.delta_distance = 0.0
+        self.delta_angle = 0.0
+        self.delta_lin_velocity = 0.0
+        self.delta_ang_velocity = 0.0
 
         self.done = False
         self.init = True
         self.vel_cmd = [0.0, 0.0]  # calculated velocities (linear, angular)
+
         # Publishers and subscribers
         self.publisher_cmd_vel = rospy.Publisher("/controller_diffdrive/cmd_vel",Twist, queue_size=10)
         self.publisher_waypoints = rospy.Publisher("/mission_control/waypoints",MarkerArray,queue_size=10)
         rospy.Subscriber('odom', Odometry, self.onOdom)
+        
         # Messages
         self.marker_array = None
         self.twist = Twist()
+        
         # Registering start time of this node
         self.startTime = 0
         while self.startTime == 0:
@@ -89,7 +100,11 @@ class PDController:
         @result: returns wrapped angle -Pi <= angle <= Pi
         """
         #TODO: return the angle between -PI and PI
-        return 1.0
+        if (abs(angle) > math.pi):
+            a = 2*math.pi - abs(angle)
+            return -a
+        else:
+            return angle
         
     def run(self):
         """
@@ -134,27 +149,36 @@ class PDController:
     def controller(self):
         """
         Takes the errors and calculates velocities from it, according to
-         control algorithm specs.
+        control algorithm specs.
+        command = Kp e + Kd edot
+        e = Vector2(distance err, angle err)
+        ed = Vector2(vel change, angle change)
         @param: self
         @result: sets the values in self.vel_cmd
         """
         # Output 0 (skip all calculations) if the last waypoint was reached
         # TODO: Your code here
-        self.vel_cmd = [0.5, 0.5]
+        e =     [self.Kp[0] * self.delta_distance,      self.Kp[1] * self.delta_angle]
+        e_dot = [self.Kd[0] * self.delta_lin_velocity,  self.Kd[1] * self.delta_ang_velocity]
+        self.vel_cmd = [e[0] + e_dot[0], e[1] + e_dot[1]] 
+        
 
     def publish_vel_cmd(self):
         """
         Publishes command velocities computed by the control algorithm.
-        command = Kp e + Kd ed
-        e = Vector2(distance err, angle err)
-        ed = Vector2(vel change, angle change)
         @param: self
         @result: publish message
         """
         # TODO: Your code here
+        self.term += 1
+        if (self.term > 55): 
+            self.vel_cmd[0] = 0
+            self.vel_cmd[1] = 0
         self.twist.linear = Vector3(self.vel_cmd[0], 0, 0)
         self.twist.angular =  Vector3(0, 0, self.vel_cmd[1])
         self.publisher_cmd_vel.publish(self.twist)
+        self.time = rospy.Time.now().to_sec()
+        
  
 
 
@@ -197,15 +221,48 @@ class PDController:
         # Store odometry data
         # TODO: Your code here
         # rospy.loginfo("This is odom msg %s", odom_msg)
+        prev_time = self.time
+        current_time = rospy.Time.now().to_sec()
+        delta_time = current_time - prev_time
+        
 
+        goal = self.waypoints[0]
+        rospy.loginfo("goal is: %s",  goal)
         prev_prosition = self.position
         prev_heading = self.heading
-        current_goal = self.waypoints[0]
-
+        
         self.position = odom_msg.pose.pose.position
         q = odom_msg.pose.pose.orientation
         quaternion = [q.x,q.y,q.z,q.w]
         _, _, self.heading = tf_conversions.transformations.euler_from_quaternion(quaternion)
+        curr_position = self.position
+        rospy.loginfo("curr is: %s,%s",  curr_position.x, curr_position.y)
+        curr_heading = self.heading
+
+        #1
+        delta_x = (goal[0] - curr_position.x)
+        delta_y = (goal[1] - curr_position.y)
+        self.delta_distance = math.sqrt( pow(delta_x, 2) + pow(delta_y, 2) )
+
+        #2 
+        angle = math.atan2(delta_x, delta_y) - curr_heading
+        #self.delta_angle = self.wrapAngle(angle)
+        self.delta_angle = angle
+
+        #3
+        delta_x_prev = (curr_position.x - prev_prosition.x)
+        delta_y_prev = (curr_position.y - prev_prosition.y)
+        delta_distance_prev = math.sqrt( pow(delta_x_prev, 2) + pow(delta_y_prev, 2) )
+        self.delta_lin_velocity = (delta_distance_prev) / 0.028
+
+        #4
+        self.delta_ang_velocity = (curr_heading - prev_heading) / 0.028
+        
+        #yaw_deg = math.degrees(self.heading)
+        rospy.loginfo("Heading is: %s",  math.degrees(curr_heading))
+        rospy.loginfo("Goal is: %s",  math.degrees(math.atan2(delta_x, delta_y)))
+        rospy.loginfo("delta goan is: %s",   math.degrees(self.delta_angle))
+        rospy.loginfo("----")
 
         # Check if current target reached;
         #  set next one if necessary and possible

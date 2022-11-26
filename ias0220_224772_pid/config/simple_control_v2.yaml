@@ -7,5 +7,5 @@ mission:
 ### controller params ###
 controller:
   # controller gains
-  Kp: [0.7, 3.2]  # proportional gains [linear, angular]
+  Kp: [0.9, 4.91]  # proportional gains [linear, angular]
   Kd: [0.1, 0.2]  # derivative gains [linear, angular]

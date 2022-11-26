@@ -1,4 +1,20 @@
 <launch>
+    <include file="$(find ias0220_224772_pid)/launch/gazebo.launch">
+            <arg name="model" value="'$(find ias0220_224772_pid)/urdf/robot.urdf'" />  
+    </include>
+
+    <rosparam command="load"
+                file="$(find ias0220_224772_sensor)/config/joints.yaml"
+                ns="joint_state_controller" />
+    <rosparam command="load"
+                file="$(find ias0220_224772_sensor)/config/diffdrive.yaml"
+                ns="controller_diffdrive" />
+    <rosparam command="load" 
+                file="$(find ias0220_224772_sensor)/config/gazebo_ros_control_params.yaml" />
+
+    <node name="controller_spawner" pkg="controller_manager" type="spawner"
+        args="joint_state_controller
+            controller_diffdrive"/>
     
     <param name="robot_description" command="$(find xacro)/xacro '$(find ias0220_224772_pid)/urdf/robot.urdf'"/>
 
@@ -8,6 +24,7 @@
 
     <node name="rviz" pkg="rviz" type="rviz" args="--display-config '$(find ias0220_224772_pid)/config/robot.rviz'" />
 
+    <!--
     <node pkg="robot_state_publisher" type="robot_state_publisher"  name="robot_state_publisher">
         <param name="publish_frequency" type="double" value="50.0" />
     </node>
@@ -16,11 +33,15 @@
     <node pkg="ias0220_224772_pid" name="simple_control" type="simple_control.py" output="screen">
      <remap from="/controller_diffdrive/cmd_vel" to="move/cmd_vel"/>
     </node>
-
+    <node name="robot_mover" pkg="transform_frame" type="move"/>
+    -->
+    <node pkg="ias0220_224772_pid" name="simple_control" type="simple_control.py" output="screen"/>
     <node pkg="ias0220_224772" name="encoders_node" type="encoders_node.py"/>
     <node pkg="ias0220_224772" name="odometer_encoder" type="odometer_encoder.py"/>
+    <node pkg="tf" type="static_transform_publisher" name="odom_to_map" args="0 0  0  0 0 0  /map /odom 100" />
 
-    <node name="robot_mover" pkg="transform_frame" type="move"/>
+
+
 
 
 </launch>

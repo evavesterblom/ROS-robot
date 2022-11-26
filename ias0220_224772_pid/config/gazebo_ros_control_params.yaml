@@ -1,0 +1,6 @@
+
+# These are the gains used by the diffDrive controller in Gazebo. 
+# We recommend not to change these, but if your robot flies in Gazebo, you may want to lower the values here (try 0.01 for P for example)
+gazebo_ros_control/pid_gains:
+  base_to_left_wheel: {p: 1.02, i: 0.0, d: 0.0}
+  base_to_right_wheel: {p: 1.02, i: 0.0, d: 0.0}
