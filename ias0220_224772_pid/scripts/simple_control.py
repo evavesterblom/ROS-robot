@@ -134,6 +134,7 @@ class PDController:
         self.wpIndex += 1
         rospy.loginfo("----------------------------------------------")
         rospy.loginfo("                Next waypoint                 ")
+        rospy.loginfo("%s",self.waypoints[0])
         rospy.loginfo("----------------------------------------------")
         return True
 
@@ -144,6 +145,8 @@ class PDController:
         @result: returns True if waypoint is reached, otherwise False
         """
         # TODO: Check if within distance_margin from waypoint
+        if (self.delta_distance<=self.distance_margin):
+            return True
         return False
 
     def controller(self):
@@ -233,9 +236,7 @@ class PDController:
         current_time = rospy.Time.now().to_sec()
         delta_time = current_time - prev_time
         
-
         goal = self.waypoints[0]
-        rospy.loginfo("goal is: %s",  goal)
         prev_prosition = self.position
         prev_heading = self.heading
         
@@ -244,7 +245,6 @@ class PDController:
         quaternion = [q.x,q.y,q.z,q.w]
         _, _, self.heading = tf_conversions.transformations.euler_from_quaternion(quaternion)
         curr_position = self.position
-        rospy.loginfo("curr is: %s,%s",  curr_position.x, curr_position.y)
         curr_heading = self.heading
 
         #1
@@ -268,10 +268,10 @@ class PDController:
         self.delta_ang_velocity = (curr_heading - prev_heading) / 0.028
         
         #yaw_deg = math.degrees(self.heading)
-        rospy.loginfo("Heading is: %s",  math.degrees(curr_heading))
-        rospy.loginfo("Goal is: %s",  math.degrees(atan))
-        rospy.loginfo("delta goan is: %s",   math.degrees(self.delta_angle))
-        rospy.loginfo("----")
+        #rospy.loginfo("Heading is: %s",  math.degrees(curr_heading))
+        #rospy.loginfo("Goal is: %s",  math.degrees(atan))
+        #rospy.loginfo("delta goan is: %s",   math.degrees(self.delta_angle))
+        #rospy.loginfo("----")
 
         # Check if current target reached;
         #  set next one if necessary and possible
