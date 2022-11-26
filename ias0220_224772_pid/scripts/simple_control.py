@@ -171,9 +171,17 @@ class PDController:
         """
         # TODO: Your code here
         self.term += 1
-        if (self.term > 55): 
-            self.vel_cmd[0] = 0
-            self.vel_cmd[1] = 0
+       
+
+        #if ((self.term%100) == 1):
+        #    self.twist.linear = Vector3(self.vel_cmd[0], 0, 0)
+        #    self.twist.angular =  Vector3(0, 0, self.vel_cmd[1])
+        #else:  
+        #    self.vel_cmd[0] = 0
+        #    self.vel_cmd[1] = 0
+        #   self.twist.linear = Vector3(self.vel_cmd[0], 0, 0)
+        #    self.twist.angular =  Vector3(0, 0, self.vel_cmd[1])
+
         self.twist.linear = Vector3(self.vel_cmd[0], 0, 0)
         self.twist.angular =  Vector3(0, 0, self.vel_cmd[1])
         self.publisher_cmd_vel.publish(self.twist)
@@ -244,8 +252,9 @@ class PDController:
         delta_y = (goal[1] - curr_position.y)
         self.delta_distance = math.sqrt( pow(delta_x, 2) + pow(delta_y, 2) )
 
-        #2 
-        angle = math.atan2(delta_x, delta_y) - curr_heading
+        #2
+        atan =  math.atan2(delta_y, delta_x)
+        angle = atan - curr_heading
         #self.delta_angle = self.wrapAngle(angle)
         self.delta_angle = angle
 
@@ -260,7 +269,7 @@ class PDController:
         
         #yaw_deg = math.degrees(self.heading)
         rospy.loginfo("Heading is: %s",  math.degrees(curr_heading))
-        rospy.loginfo("Goal is: %s",  math.degrees(math.atan2(delta_x, delta_y)))
+        rospy.loginfo("Goal is: %s",  math.degrees(atan))
         rospy.loginfo("delta goan is: %s",   math.degrees(self.delta_angle))
         rospy.loginfo("----")
 
