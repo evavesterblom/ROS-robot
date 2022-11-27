@@ -16,7 +16,7 @@ and provided odometry data.
 import math
 import rospy, time
 import numpy as np
-from geometry_msgs.msg import Twist, Point, Vector3
+from geometry_msgs.msg import Twist, Point, Vector3, PoseStamped
 from visualization_msgs.msg import MarkerArray, Marker
 from nav_msgs.msg import Odometry
 from tf.transformations import euler_from_quaternion
@@ -64,11 +64,17 @@ class PDController:
         self.publisher_cmd_vel = rospy.Publisher("/controller_diffdrive/cmd_vel",Twist, queue_size=10)
         self.publisher_waypoints = rospy.Publisher("/mission_control/waypoints",MarkerArray,queue_size=10)
         rospy.Subscriber('odom', Odometry, self.onOdom)
+        rospy.Subscriber('/move_base_simple/goal', PoseStamped, self.appendExtraWaypoint)
         self.marker_array = None
         self.twist = Twist()
         self.startTime = 0
         while self.startTime == 0:
             self.startTime = rospy.Time.now().to_sec()
+
+    def appendExtraWaypoint(self, msg):
+        self.waypoints.append([msg.pose.position.x, msg.pose.position.y]) 
+        rospy.loginfo("Appended: [%.1f, %.1f]",   msg.pose.position.x, msg.pose.position.y)
+        self.done = False
 
     def wrapAngle(self, angle):
         if (abs(angle) > math.pi):
@@ -87,15 +93,16 @@ class PDController:
         self.waypoints.pop(0)
         if not self.waypoints:
             return False
-        self.wpIndex += 1
+        # self.wpIndex += 1
         rospy.loginfo("----------------------------------------------")
         rospy.loginfo("                Next waypoint                 ")
-        rospy.loginfo("%s",self.waypoints[0])
+        rospy.loginfo("%s %sth",self.waypoints[0], self.wpIndex)
         rospy.loginfo("----------------------------------------------")
         return True
 
     def isWaypointReached(self):
         if (self.delta_distance<=self.distance_margin):
+            self.wpIndex += 1
             self.align = True
             return True
         return False
@@ -197,14 +204,16 @@ class PDController:
                 rospy.loginfo("----")
 
         if self.isWaypointReached():
+            if (self.wpIndex == 5):
+                rospy.loginfo("This was the last waypoint in the list.")
+                endTime = rospy.Time.now().to_sec()
+                rospy.loginfo("Started node  [s]: %.2f", self.startTime)
+                rospy.loginfo("Finished node [s]: %.2f", endTime)
+                totalTime = endTime - self.startTime
+                rospy.loginfo("Elapsed time  [s]: %.2f", totalTime)
             if not self.setNextWaypoint():
                 if not self.done:
-                    rospy.loginfo("This was the last waypoint in the list.")
-                    endTime = rospy.Time.now().to_sec()
-                    rospy.loginfo("Started node  [s]: %.2f", self.startTime)
-                    rospy.loginfo("Finished node [s]: %.2f", endTime)
-                    totalTime = endTime - self.startTime
-                    rospy.loginfo("Elapsed time  [s]: %.2f", totalTime)
+                    rospy.loginfo("No more waypoints. Add WP")
                     self.done = True
 
         if not self.done:
