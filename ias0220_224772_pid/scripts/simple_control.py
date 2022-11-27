@@ -50,6 +50,7 @@ class PDController:
         self.position = Point()   # current position (3D vector: .x, .y, .z)
         self.heading = 0.0        # current orientation of robot (yaw [rad])
         self.time = rospy.Time.now().to_sec()
+        self.align = False
 
         self.delta_distance = 0.0
         self.delta_angle = 0.0
@@ -95,6 +96,8 @@ class PDController:
 
     def isWaypointReached(self):
         if (self.delta_distance<=self.distance_margin):
+            self.align = True
+            rospy.loginfo("Aligning in progress ")
             return True
         return False
 
@@ -107,10 +110,17 @@ class PDController:
         e =     [self.Kp[0] * self.delta_distance,      self.Kp[1] * self.delta_angle]
         e_dot = [self.Kd[0] * self.delta_lin_velocity,  self.Kd[1] * self.delta_ang_velocity]
         self.vel_cmd = [e[0] + e_dot[0], e[1] + e_dot[1]] 
+
+        if (self.align == True): #while aligning the heading, linear speed is 0
+            rospy.loginfo("Aligning towards the goal")
+            self.vel_cmd = [0, e[1] + e_dot[1]] 
         
 
     def publish_vel_cmd(self):
         self.term += 1
+        # self.vel_cmd[0] = 0
+        # self.vel_cmd[1] = 0.5
+
         self.twist.linear = Vector3(self.vel_cmd[0], 0, 0)
         self.twist.angular =  Vector3(0, 0, self.vel_cmd[1])
         self.publisher_cmd_vel.publish(self.twist)
@@ -176,13 +186,16 @@ class PDController:
             #4
             self.delta_ang_velocity = (curr_heading - prev_heading) / (delta_time + 0.001)
 
-        if ((self.term%2) == 1):
-            rospy.loginfo("Heading is: %.2f degrees",  math.degrees(curr_heading))
-            rospy.loginfo("Goal is: %.2f degrees",  math.degrees(atan))
-            rospy.loginfo("Delta goal is: %.2f",   math.degrees(self.delta_angle))
-            rospy.loginfo("Odom wp is: [%.1f, %.1f]",   curr_position.x, self.position.y)
-            rospy.loginfo("Goal wp is: %s",   goal)
-            rospy.loginfo("----")
+            if ( abs(math.degrees(self.delta_angle)) < 10):
+                self.align = False
+
+            if ((self.term%10) == 1):
+                rospy.loginfo("Heading is: %.2f degrees",  math.degrees(curr_heading))
+                rospy.loginfo("Goal is: %.2f degrees",  math.degrees(atan))
+                rospy.loginfo("Delta goal is: %.2f",   math.degrees(self.delta_angle))
+                rospy.loginfo("Odom wp is: [%.1f, %.1f]",   curr_position.x, self.position.y)
+                rospy.loginfo("Goal wp is: %s",   goal)
+                rospy.loginfo("----")
 
         if self.isWaypointReached():
             if not self.setNextWaypoint():

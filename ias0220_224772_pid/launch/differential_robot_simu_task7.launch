@@ -36,8 +36,8 @@
     <node name="robot_mover" pkg="transform_frame" type="move"/>
     -->
     <node pkg="ias0220_224772_pid" name="simple_control" type="simple_control.py" output="screen"/>
-    <node pkg="ias0220_224772" name="encoders_node" type="encoders_node.py"/>
-    <node pkg="ias0220_224772" name="odometer_encoder" type="odometer_encoder.py"/>
+    <node pkg="ias0220_224772_pid" name="encoders_node" type="encoders_node.py"/>
+    <node pkg="ias0220_224772_pid" name="odometry_node" type="odometry_node_javier.py"/>
     <node pkg="tf" type="static_transform_publisher" name="odom_to_map" args="0 0  0  0 0 0  /map /odom 100" />
 
 
