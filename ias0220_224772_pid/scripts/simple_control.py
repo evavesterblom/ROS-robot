@@ -97,7 +97,6 @@ class PDController:
     def isWaypointReached(self):
         if (self.delta_distance<=self.distance_margin):
             self.align = True
-            rospy.loginfo("Aligning in progress ")
             return True
         return False
 
