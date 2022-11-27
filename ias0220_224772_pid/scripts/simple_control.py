@@ -94,11 +94,9 @@ class PDController:
         self.waypoints.pop(0)
         if not self.waypoints:
             return False
-        # self.wpIndex += 1
         rospy.loginfo("----------------------------------------------")
         rospy.loginfo("                Next waypoint                 ")
         rospy.loginfo("%s",self.waypoints[0])
-        rospy.loginfo("----------------------------------------------")
         return True
 
     def isWaypointReached(self):
@@ -125,9 +123,6 @@ class PDController:
 
     def publish_vel_cmd(self):
         self.term += 1
-        # self.vel_cmd[0] = 0
-        # self.vel_cmd[1] = 0.5
-
         self.twist.linear = Vector3(self.vel_cmd[0], 0, 0)
         self.twist.angular =  Vector3(0, 0, self.vel_cmd[1])
         self.publisher_cmd_vel.publish(self.twist)
