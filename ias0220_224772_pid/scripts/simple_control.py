@@ -27,6 +27,7 @@ class PDController:
         self.Kp = rospy.get_param("/controller_waypoints/controller/Kp")
         self.distance_margin = rospy.get_param("/controller_waypoints/mission/distance_margin")
         self.waypoints = rospy.get_param("/controller_waypoints/mission/waypoints")
+        self.mandatory_wp_count = len(self.waypoints)
 
         rospy.loginfo("Got static data from parameter server:")
         rospy.loginfo(" Mission parameters:")
@@ -50,14 +51,14 @@ class PDController:
         self.position = Point()   # current position (3D vector: .x, .y, .z)
         self.heading = 0.0        # current orientation of robot (yaw [rad])
         self.time = rospy.Time.now().to_sec()
-        self.align = False
+        self.align = False        # do the alignment flag before going to next wp
 
         self.delta_distance = 0.0
         self.delta_angle = 0.0
         self.delta_lin_velocity = 0.0
         self.delta_ang_velocity = 0.0
 
-        self.done = False
+        self.done = False          # no more wp
         self.init = True
         self.vel_cmd = [0.0, 0.0]  # calculated velocities (linear, angular)
 
@@ -96,7 +97,7 @@ class PDController:
         # self.wpIndex += 1
         rospy.loginfo("----------------------------------------------")
         rospy.loginfo("                Next waypoint                 ")
-        rospy.loginfo("%s %sth",self.waypoints[0], self.wpIndex)
+        rospy.loginfo("%s",self.waypoints[0])
         rospy.loginfo("----------------------------------------------")
         return True
 
@@ -118,7 +119,7 @@ class PDController:
         self.vel_cmd = [e[0] + e_dot[0], e[1] + e_dot[1]] 
 
         if (self.align == True): #while aligning the heading, linear speed is 0
-            rospy.loginfo("Aligning towards the goal")
+            # rospy.loginfo("Aligning towards the goal")
             self.vel_cmd = [0, e[1] + e_dot[1]] 
         
 
@@ -181,7 +182,6 @@ class PDController:
             atan =  math.atan2(delta_y, delta_x)
             angle = atan - curr_heading
             self.delta_angle = self.wrapAngle(angle)
-            #self.delta_angle = angle
 
             #3
             delta_x_prev = (curr_position.x - prev_prosition.x)
@@ -195,22 +195,23 @@ class PDController:
             if ( abs(math.degrees(self.delta_angle)) < 10):
                 self.align = False
 
-            if ((self.term%10) == 1):
-                rospy.loginfo("Heading is: %.2f degrees",  math.degrees(curr_heading))
-                rospy.loginfo("Goal is: %.2f degrees",  math.degrees(atan))
-                rospy.loginfo("Delta goal is: %.2f",   math.degrees(self.delta_angle))
-                rospy.loginfo("Odom wp is: [%.1f, %.1f]",   curr_position.x, self.position.y)
-                rospy.loginfo("Goal wp is: %s",   goal)
-                rospy.loginfo("----")
+            # if ((self.term%10) == 1):
+            #     rospy.loginfo("Heading is: %.2f degrees",  math.degrees(curr_heading))
+            #     rospy.loginfo("Goal is: %.2f degrees",  math.degrees(atan))
+            #     rospy.loginfo("Delta goal is: %.2f",   math.degrees(self.delta_angle))
+            #     rospy.loginfo("Odom wp is: [%.1f, %.1f]",   curr_position.x, self.position.y)
+            #     rospy.loginfo("Goal wp is: %s",   goal)
+            #     rospy.loginfo("----")
 
         if self.isWaypointReached():
-            if (self.wpIndex == 5):
+            if (self.wpIndex == self.mandatory_wp_count):
                 rospy.loginfo("This was the last waypoint in the list.")
                 endTime = rospy.Time.now().to_sec()
                 rospy.loginfo("Started node  [s]: %.2f", self.startTime)
                 rospy.loginfo("Finished node [s]: %.2f", endTime)
                 totalTime = endTime - self.startTime
                 rospy.loginfo("Elapsed time  [s]: %.2f", totalTime)
+
             if not self.setNextWaypoint():
                 if not self.done:
                     rospy.loginfo("No more waypoints. Add WP")
