@@ -18,7 +18,7 @@ You are also allowed to create more methods, or delete some.
 """
 
 import math
-import rospy
+import rospy, time
 import numpy as np
 from geometry_msgs.msg import Twist, Point, Vector3
 from visualization_msgs.msg import MarkerArray, Marker
@@ -87,6 +87,7 @@ class PDController:
         self.startTime = 0
         while self.startTime == 0:
             self.startTime = rospy.Time.now().to_sec()
+        
 
     def wrapAngle(self, angle):
         """
@@ -176,14 +177,14 @@ class PDController:
         self.term += 1
        
 
-        #if ((self.term%100) == 1):
-        #    self.twist.linear = Vector3(self.vel_cmd[0], 0, 0)
-        #    self.twist.angular =  Vector3(0, 0, self.vel_cmd[1])
-        #else:  
-        #    self.vel_cmd[0] = 0
-        #    self.vel_cmd[1] = 0
-        #   self.twist.linear = Vector3(self.vel_cmd[0], 0, 0)
-        #    self.twist.angular =  Vector3(0, 0, self.vel_cmd[1])
+        # if ((self.term%5) == 1):
+        #     self.twist.linear = Vector3(self.vel_cmd[0], 0, 0)
+        #     self.twist.angular =  Vector3(0, 0, self.vel_cmd[1])
+        # else:  
+        #     self.vel_cmd[0] = 0
+        #     self.vel_cmd[1] = 0
+        #     self.twist.linear = Vector3(self.vel_cmd[0], 0, 0)
+        #     self.twist.angular =  Vector3(0, 0, self.vel_cmd[1])
 
         self.twist.linear = Vector3(self.vel_cmd[0], 0, 0)
         self.twist.angular =  Vector3(0, 0, self.vel_cmd[1])
@@ -236,7 +237,6 @@ class PDController:
         current_time = rospy.Time.now().to_sec()
         delta_time = current_time - prev_time
         
-        goal = self.waypoints[0]
         prev_prosition = self.position
         prev_heading = self.heading
         
@@ -247,31 +247,37 @@ class PDController:
         curr_position = self.position
         curr_heading = self.heading
 
-        #1
-        delta_x = (goal[0] - curr_position.x)
-        delta_y = (goal[1] - curr_position.y)
-        self.delta_distance = math.sqrt( pow(delta_x, 2) + pow(delta_y, 2) )
+        if self.waypoints:
+            #1
+            goal = self.waypoints[0]
+            delta_x = (goal[0] - curr_position.x)
+            delta_y = (goal[1] - curr_position.y)
+            self.delta_distance = math.sqrt( pow(delta_x, 2) + pow(delta_y, 2) )
 
-        #2
-        atan =  math.atan2(delta_y, delta_x)
-        angle = atan - curr_heading
-        #self.delta_angle = self.wrapAngle(angle)
-        self.delta_angle = angle
+            #2
+            atan =  math.atan2(delta_y, delta_x)
+            angle = atan - curr_heading
+            self.delta_angle = self.wrapAngle(angle)
+            #self.delta_angle = angle
 
-        #3
-        delta_x_prev = (curr_position.x - prev_prosition.x)
-        delta_y_prev = (curr_position.y - prev_prosition.y)
-        delta_distance_prev = math.sqrt( pow(delta_x_prev, 2) + pow(delta_y_prev, 2) )
-        self.delta_lin_velocity = (delta_distance_prev) / 0.028
+            #3
+            delta_x_prev = (curr_position.x - prev_prosition.x)
+            delta_y_prev = (curr_position.y - prev_prosition.y)
+            delta_distance_prev = math.sqrt( pow(delta_x_prev, 2) + pow(delta_y_prev, 2) )
+            self.delta_lin_velocity = (delta_distance_prev) /  (delta_time + 0.001)
 
-        #4
-        self.delta_ang_velocity = (curr_heading - prev_heading) / 0.028
+            #4
+            self.delta_ang_velocity = (curr_heading - prev_heading) / (delta_time + 0.001)
         
         #yaw_deg = math.degrees(self.heading)
-        #rospy.loginfo("Heading is: %s",  math.degrees(curr_heading))
-        #rospy.loginfo("Goal is: %s",  math.degrees(atan))
-        #rospy.loginfo("delta goan is: %s",   math.degrees(self.delta_angle))
-        #rospy.loginfo("----")
+        #if not self.done:
+        if ((self.term%5) == 1):
+            rospy.loginfo("Heading is: %.2f degrees",  math.degrees(curr_heading))
+            rospy.loginfo("Goal is: %.2f degrees",  math.degrees(atan))
+            rospy.loginfo("Delta goal is: %.2f",   math.degrees(self.delta_angle))
+            rospy.loginfo("Odom wp is: [%.1f, %.1f]",   curr_position.x, self.position.y)
+            rospy.loginfo("Goal wp is: %s",   goal)
+            rospy.loginfo("----")
 
         # Check if current target reached;
         #  set next one if necessary and possible
@@ -286,11 +292,12 @@ class PDController:
                     rospy.loginfo("Elapsed time  [s]: %.2f", totalTime)
                     self.done = True
 
-        # Apply PD algorithm
-        self.controller()
+        if not self.done:
+            # Apply PD algorithm
+            self.controller()
 
-        # Publish velocity commands
-        self.publish_vel_cmd()
+            # Publish velocity commands
+            self.publish_vel_cmd()
 
         # Publish waypoint list
         self.publish_waypoints()
@@ -299,4 +306,6 @@ class PDController:
 if __name__ == '__main__':
     rospy.init_node("Planner")
     controller = PDController()
+    while rospy.get_time() == 0.0: #wait init
+        time.sleep(1.0)
     controller.run()
