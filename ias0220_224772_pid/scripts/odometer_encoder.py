@@ -22,7 +22,7 @@ def calculate_linear_velocity(omega, radius):
     return omega * radius
 
 def calculate_ticks_since(previous, current):
-    treshold = 500
+    treshold = 1200
     if abs(current - previous) < treshold:
         ticks_since = current - previous
     else:
