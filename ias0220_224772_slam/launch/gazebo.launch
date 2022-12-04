@@ -15,7 +15,7 @@
         <arg name="paused" value="$(arg paused)"/>
         <arg name="use_sim_time" value="$(arg use_sim_time)"/>
         <arg name="headless" value="$(arg headless)"/>
-        <arg name="world_name" value="$(find ias0220_224772_slam)/worlds/seethelight.world"/>
+        <arg name="world_name" value="$(find ias0220_224772_slam)/worlds/test.world"/>
     </include>
 
     <!-- Load the robot URDF model-->
@@ -28,5 +28,7 @@
     <node pkg="robot_state_publisher" type="robot_state_publisher"  name="robot_state_publisher">
         <param name="publish_frequency" type="double" value="50.0" />
     </node>
+
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher"/>
 
 </launch>

@@ -86,6 +86,21 @@
       <inertia ixx="0.0013" iyy="0.0013" izz="0.0013"  ixy="0"  ixz="0" iyz="0"/>
     </inertial>
   </link>
+
+  <link name="sensor">
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <visual>
+      <geometry><mesh filename="package://rrbot_description/meshes/hokuyo.dae"/></geometry>
+    </visual>
+    <collision>
+      <geometry><mesh filename="package://rrbot_description/meshes/hokuyo.dae"/></geometry>
+    </collision>
+    <inertial>
+      <mass value="1e-5" />
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+  </link>
   
     <link name="passive_wheel_holder">
     <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -130,8 +145,6 @@
   </link>
   
   
-  
-  
   <joint name="base_to_footprint" type="fixed">
     <parent link="base_footprint"/>
     <child link="base_link"/>
@@ -157,6 +170,12 @@
     <child link="head"/>
     <origin rpy="0 0 0" xyz="0.05 0 0.02"/>
   </joint>
+
+  <joint name="base_to_sensor" type="fixed">
+    <parent link="base_link"/>
+    <child link="sensor"/>
+    <origin rpy="0 0 0" xyz="0 0 0.04"/>
+  </joint>
   
   <joint name="base_to_wheel_holder" type="fixed">
     <parent link="base_link"/>
@@ -170,23 +189,59 @@
     <origin rpy="0 0 0" xyz="0 0 -0.01"/>
   </joint>
 
+ <!-- GAZEBO REFERENCES -->
+  <gazebo reference="sensor">
+    <sensor type="ray" name="head_hokuyo_sensor">
+      <pose>0 0 0 0 0 0</pose>
+      <visualize>true</visualize>
+      <update_rate>40</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>720</samples>
+            <resolution>1</resolution>
+            <min_angle>-1.570796</min_angle>
+            <max_angle>1.570796</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.10</min>
+          <max>30.0</max>
+          <resolution>0.01</resolution>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <!-- Noise parameters based on published spec for Hokuyo laser
+               achieving "+-30mm" accuracy at range < 10m.  A mean of 0.0m and
+               stddev of 0.01m will put 99.7% of samples within 0.03m of the true
+               reading. -->
+          <mean>0.0</mean>
+          <stddev>0.01</stddev>
+        </noise>
+      </ray>
+      <plugin name="gazebo_ros_head_hokuyo_controller" filename="libgazebo_ros_laser.so">
+        <topicName>/scan</topicName>
+        <frameName>sensor</frameName>
+      </plugin>
+    </sensor>
+  </gazebo>
 
-    <gazebo reference="passive_wheel">
-      <mu1>0</mu1>
-      <mu2>0</mu2>
-      <material>Gazebo/Green</material>
-    </gazebo>
+  <gazebo reference="passive_wheel">
+    <mu1>0</mu1>
+    <mu2>0</mu2>
+    <material>Gazebo/Green</material>
+  </gazebo>
 
-    <gazebo reference="left_wheel">
-      <material>Gazebo/Red</material>
-    </gazebo>
+  <gazebo reference="left_wheel">
+    <material>Gazebo/Red</material>
+  </gazebo>
 
-    <gazebo reference="right_wheel">
-      <material>Gazebo/Red</material>
-    </gazebo>
+  <gazebo reference="right_wheel">
+    <material>Gazebo/Red</material>
+  </gazebo>
     
 
-   <transmission name="base_to_right_wheel_trans">
+  <transmission name="base_to_right_wheel_trans">
     <type>transmission_interface/SimpleTransmission</type>
     <actuator name="base_to_right_wheel_motor">
       <mechanicalReduction>1</mechanicalReduction>

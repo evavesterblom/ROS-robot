@@ -13,7 +13,7 @@ from nav_msgs.msg import Odometry
 from geometry_msgs.msg import Vector3
 from geometry_msgs.msg import Pose
 import tf
-from ias0220_224772_pid.msg import counter_message
+from ias0220_224772_slam.msg import counter_message
 
 def calculate_angular_velocity(ticks, time):
     return ((ticks / 2048) * 2 * math.pi) / time
