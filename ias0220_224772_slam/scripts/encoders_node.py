@@ -13,7 +13,7 @@ import rospy
 import math
 import tf
 from numpy import random
-from ias0220_224772.msg import counter_message
+from ias0220_224772_slam.msg import counter_message
 import sys
 
 class EncodersNode:

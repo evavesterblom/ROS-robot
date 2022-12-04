@@ -16,30 +16,21 @@
         args="joint_state_controller
             controller_diffdrive"/>
     
-    <param name="robot_description" command="$(find xacro)/xacro '$(find ias0220_224772_pid)/urdf/robot.urdf'"/>
+    <param name="robot_description" command="$(find xacro)/xacro '$(find ias0220_224772_slam)/urdf/robot.urdf'"/>
 
     <rosparam command="load"
                 file="$(find ias0220_224772_slam)/config/simple_control_v2.yaml"
                 ns="controller_waypoints" />
 
-    <node name="rviz" pkg="rviz" type="rviz" args="--display-config '$(find ias0220_224772_pid)/config/robot.rviz'" />
+    <node name="rviz" pkg="rviz" type="rviz" args="--display-config '$(find ias0220_224772_slam)/config/robot_odom_error.rviz'" />
 
-    <!--
-    <node pkg="robot_state_publisher" type="robot_state_publisher"  name="robot_state_publisher">
-        <param name="publish_frequency" type="double" value="50.0" />
-    </node>
-    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher"/>
-
-    <node pkg="ias0220_224772_pid" name="simple_control" type="simple_control.py" output="screen">
-     <remap from="/controller_diffdrive/cmd_vel" to="move/cmd_vel"/>
-    </node>
-    <node name="robot_mover" pkg="transform_frame" type="move"/>
-    -->
     <node pkg="ias0220_224772_slam" name="simple_control" type="simple_control.py" output="screen"/>
     <node pkg="ias0220_224772_slam" name="encoders_node" type="encoders_node.py"/>
     <node pkg="ias0220_224772_slam" name="odometry_node" type="odometry_node_javier.py"/>
-    <node pkg="tf" type="static_transform_publisher" name="odom_to_map" args="0 0  0  0 0 0  /map /odom 100" />
-
+    
+    <!--<node pkg="tf" type="static_transform_publisher" name="odom_to_map" args="0 0  0  0 0 0  /map /odom 100" />-->
+    <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping"> 
+    </node> 
 
 
 

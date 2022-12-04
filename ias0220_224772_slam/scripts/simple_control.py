@@ -16,11 +16,12 @@ and provided odometry data.
 import math
 import rospy, time
 import numpy as np
-from geometry_msgs.msg import Twist, Point, Vector3, PoseStamped
+from geometry_msgs.msg import Twist, Point, Vector3, PoseStamped, PointStamped
 from visualization_msgs.msg import MarkerArray, Marker
 from nav_msgs.msg import Odometry
 from tf.transformations import euler_from_quaternion
 import tf_conversions
+import tf
 class PDController:
     def __init__(self):
         self.Kd = rospy.get_param("/controller_waypoints/controller/Kd")
@@ -65,7 +66,10 @@ class PDController:
         self.publisher_cmd_vel = rospy.Publisher("/controller_diffdrive/cmd_vel",Twist, queue_size=10)
         self.publisher_waypoints = rospy.Publisher("/mission_control/waypoints",MarkerArray,queue_size=10)
         rospy.Subscriber('odom', Odometry, self.onOdom)
+        #rospy.Subscriber('/controller_diffdrive/odom', Odometry, self.onOdom)
         rospy.Subscriber('/move_base_simple/goal', PoseStamped, self.appendExtraWaypoint)
+        self.listener = tf.TransformListener()
+
         self.marker_array = None
         self.twist = Twist()
         self.startTime = 0
@@ -153,6 +157,24 @@ class PDController:
         self.publisher_waypoints.publish(self.marker_array)
 
     def onOdom(self, odom_msg):
+        #corrected values of pose in the odom frame / latest transform from map to odom
+        #(trans,rot) = self.listener.lookupTransform('/odom', '/map', rospy.Time(0))
+
+        p = PoseStamped()
+        p.header.frame_id = 'odom'
+        p.pose = odom_msg.pose.pose
+        transformed_pose = self.listener.transformPose('odom', p)
+
+
+
+# The gmapping package does not directly publish any pose. 
+# It will publish a topic /map which is an occupancy grid. 
+# It will also publish a transform to the map frame from odom; 
+# this is essentially a roundabout way of getting a pose. 
+# If you want a pose in this frame you need to create another node that takes in the current pose, 
+# most recent transform produced from gmapping,
+#  and apply it to the pose. This can be done with the tf package, for example:
+
         prev_time = self.time
         current_time = rospy.Time.now().to_sec()
         delta_time = current_time - prev_time
@@ -160,9 +182,12 @@ class PDController:
         prev_prosition = self.position
         prev_heading = self.heading
         
-        self.position = odom_msg.pose.pose.position
-        q = odom_msg.pose.pose.orientation
+        # self.position = odom_msg.pose.pose.position
+        # q = odom_msg.pose.pose.orientation
+        self.position = transformed_pose.pose.position
+        q = transformed_pose.pose.orientation
         _, _, self.heading = tf_conversions.transformations.euler_from_quaternion([q.x,q.y,q.z,q.w])
+    
         curr_position = self.position
         curr_heading = self.heading
 
