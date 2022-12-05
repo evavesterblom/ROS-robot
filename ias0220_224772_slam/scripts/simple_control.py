@@ -16,7 +16,7 @@ and provided odometry data.
 import math
 import rospy, time
 import numpy as np
-from geometry_msgs.msg import Twist, Point, Vector3, PoseStamped, PointStamped
+from geometry_msgs.msg import Twist, Point, Vector3, PoseStamped, PointStamped, Quaternion
 from visualization_msgs.msg import MarkerArray, Marker
 from nav_msgs.msg import Odometry
 from tf.transformations import euler_from_quaternion
@@ -65,8 +65,8 @@ class PDController:
 
         self.publisher_cmd_vel = rospy.Publisher("/controller_diffdrive/cmd_vel",Twist, queue_size=10)
         self.publisher_waypoints = rospy.Publisher("/mission_control/waypoints",MarkerArray,queue_size=10)
-        rospy.Subscriber('odom', Odometry, self.onOdom)
-        #rospy.Subscriber('/controller_diffdrive/odom', Odometry, self.onOdom)
+        #rospy.Subscriber('odom', Odometry, self.onOdom)
+        rospy.Subscriber('/controller_diffdrive/odom', Odometry, self.onOdom)
         rospy.Subscriber('/move_base_simple/goal', PoseStamped, self.appendExtraWaypoint)
         self.listener = tf.TransformListener()
 
@@ -158,14 +158,7 @@ class PDController:
 
     def onOdom(self, odom_msg):
         #corrected values of pose in the odom frame / latest transform from map to odom
-        #(trans,rot) = self.listener.lookupTransform('/odom', '/map', rospy.Time(0))
-
-        p = PoseStamped()
-        p.header.frame_id = 'odom'
-        p.pose = odom_msg.pose.pose
-        transformed_pose = self.listener.transformPose('odom', p)
-
-
+        (trans,rot) = self.listener.lookupTransform('/map', '/odom', rospy.Time(0))
 
 # The gmapping package does not directly publish any pose. 
 # It will publish a topic /map which is an occupancy grid. 
@@ -183,9 +176,22 @@ class PDController:
         prev_heading = self.heading
         
         # self.position = odom_msg.pose.pose.position
+        self.position = Point(odom_msg.pose.pose.position.x + trans[0],
+        odom_msg.pose.pose.position.y + trans[1],
+        odom_msg.pose.pose.position.z + trans[2])
+     
+        # rospy.loginfo("Odom wp is: [%.1f, %.1f]",   odom_msg.pose.pose.position.x, odom_msg.pose.pose.position.y)
+        # rospy.loginfo("Corr wp is: [%.1f, %.1f]",   self.position.x, self.position.y)
+        # rospy.loginfo("Transform is: [%s]",   trans)
+
+
         # q = odom_msg.pose.pose.orientation
-        self.position = transformed_pose.pose.position
-        q = transformed_pose.pose.orientation
+        q = odom_msg.pose.pose.orientation
+        q.x = odom_msg.pose.pose.orientation.x + rot[0]
+        q.y = odom_msg.pose.pose.orientation.y + rot[1]
+        q.z = odom_msg.pose.pose.orientation.z + rot[2]
+        q.w = odom_msg.pose.pose.orientation.w + rot[3]
+
         _, _, self.heading = tf_conversions.transformations.euler_from_quaternion([q.x,q.y,q.z,q.w])
     
         curr_position = self.position
@@ -212,16 +218,18 @@ class PDController:
             #4
             self.delta_ang_velocity = (curr_heading - prev_heading) / (delta_time + 0.001)
 
-            if ( abs(math.degrees(self.delta_angle)) < 10):
+            if ( abs(math.degrees(self.delta_angle)) < 20):
                 self.align = False
 
-            # if ((self.term%10) == 1):
-            #     rospy.loginfo("Heading is: %.2f degrees",  math.degrees(curr_heading))
-            #     rospy.loginfo("Goal is: %.2f degrees",  math.degrees(atan))
-            #     rospy.loginfo("Delta goal is: %.2f",   math.degrees(self.delta_angle))
-            #     rospy.loginfo("Odom wp is: [%.1f, %.1f]",   curr_position.x, self.position.y)
-            #     rospy.loginfo("Goal wp is: %s",   goal)
-            #     rospy.loginfo("----")
+
+            if ((self.term%10) == 1):
+                rospy.loginfo("Heading is: %.2f degrees",  math.degrees(curr_heading))
+                rospy.loginfo("Goal is: %.2f degrees",  math.degrees(atan))
+                rospy.loginfo("Delta goal is: %.2f",   math.degrees(self.delta_angle))
+                rospy.loginfo("Odom wp is: [%.1f, %.1f]",   curr_position.x, curr_position.y)
+                rospy.loginfo("Goal wp is: %s",   goal)
+                rospy.loginfo("Wall  is: %s",   self.twist.linear )
+                rospy.loginfo("----")
 
         if self.isWaypointReached():
             if (self.wpIndex == self.mandatory_wp_count):
