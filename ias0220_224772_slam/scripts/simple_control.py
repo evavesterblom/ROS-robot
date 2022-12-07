@@ -82,11 +82,18 @@ class PDController:
         self.done = False
 
     def wrapAngle(self, angle):
-        if (abs(angle) > math.pi):
-            a = 2*math.pi - abs(angle)
-            return -a
+        # if (abs(angle) > math.pi):
+        #     a = 2*math.pi - abs(angle)
+        #     return -a
+        # else:
+        #     return angle
+        if (angle > math.pi):
+            return angle - 2*math.pi
+        elif (angle < -math.pi):
+            return angle + 2*math.pi
         else:
             return angle
+
         
     def run(self):
         rospy.loginfo("Waiting for odom message...")
@@ -158,15 +165,14 @@ class PDController:
 
     def onOdom(self, odom_msg):
         #corrected values of pose in the odom frame / latest transform from map to odom
-        (trans,rot) = self.listener.lookupTransform('/map', '/odom', rospy.Time(0))
-
-# The gmapping package does not directly publish any pose. 
-# It will publish a topic /map which is an occupancy grid. 
-# It will also publish a transform to the map frame from odom; 
-# this is essentially a roundabout way of getting a pose. 
-# If you want a pose in this frame you need to create another node that takes in the current pose, 
-# most recent transform produced from gmapping,
-#  and apply it to the pose. This can be done with the tf package, for example:
+        # The gmapping package does not directly publish any pose. 
+        # It will publish a topic /map which is an occupancy grid. 
+        # It will also publish a transform to the map frame from odom; 
+        # this is essentially a roundabout way of getting a pose. 
+        # If you want a pose in this frame you need to create another node that takes in the current pose, 
+        # most recent transform produced from gmapping,
+        #  and apply it to the pose. This can be done with the tf package, for example:
+        (trans,rot) = self.listener.lookupTransform('/map', '/base_link', rospy.Time(0))
 
         prev_time = self.time
         current_time = rospy.Time.now().to_sec()
@@ -176,21 +182,10 @@ class PDController:
         prev_heading = self.heading
         
         # self.position = odom_msg.pose.pose.position
-        self.position = Point(odom_msg.pose.pose.position.x + trans[0],
-        odom_msg.pose.pose.position.y + trans[1],
-        odom_msg.pose.pose.position.z + trans[2])
-     
-        # rospy.loginfo("Odom wp is: [%.1f, %.1f]",   odom_msg.pose.pose.position.x, odom_msg.pose.pose.position.y)
-        # rospy.loginfo("Corr wp is: [%.1f, %.1f]",   self.position.x, self.position.y)
-        # rospy.loginfo("Transform is: [%s]",   trans)
-
+        self.position = Point(trans[0], trans[1], trans[2])
 
         # q = odom_msg.pose.pose.orientation
-        q = odom_msg.pose.pose.orientation
-        q.x = odom_msg.pose.pose.orientation.x + rot[0]
-        q.y = odom_msg.pose.pose.orientation.y + rot[1]
-        q.z = odom_msg.pose.pose.orientation.z + rot[2]
-        q.w = odom_msg.pose.pose.orientation.w + rot[3]
+        q = Quaternion(rot[0], rot[1], rot[2], rot[3])
 
         _, _, self.heading = tf_conversions.transformations.euler_from_quaternion([q.x,q.y,q.z,q.w])
     
@@ -213,12 +208,14 @@ class PDController:
             delta_x_prev = (curr_position.x - prev_prosition.x)
             delta_y_prev = (curr_position.y - prev_prosition.y)
             delta_distance_prev = math.sqrt( pow(delta_x_prev, 2) + pow(delta_y_prev, 2) )
-            self.delta_lin_velocity = (delta_distance_prev) /  (delta_time + 0.001)
+            if (delta_time != 0):
+                self.delta_lin_velocity = (delta_distance_prev) /  (delta_time)
 
             #4
-            self.delta_ang_velocity = (curr_heading - prev_heading) / (delta_time + 0.001)
+            if (delta_time != 0):
+                self.delta_ang_velocity = (curr_heading - prev_heading) / (delta_time)
 
-            if ( abs(math.degrees(self.delta_angle)) < 20):
+            if ( abs(math.degrees(self.delta_angle)) < 7):
                 self.align = False
 
 
