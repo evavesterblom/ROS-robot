@@ -159,15 +159,16 @@ class PDController:
         self.publisher_waypoints.publish(self.marker_array)
 
     def onOdom(self, odom_msg):
-        #corrected values of pose in the odom frame / latest transform from map to odom
+        # corrected values of pose in the odom frame / latest transform from map to odom - base_link with tf
         # The gmapping package does not directly publish any pose. 
         # It will publish a topic /map which is an occupancy grid. 
         # It will also publish a transform to the map frame from odom; 
-        # this is essentially a roundabout way of getting a pose. 
-        # If you want a pose in this frame you need to create another node that takes in the current pose, 
-        # most recent transform produced from gmapping,
-        #  and apply it to the pose. This can be done with the tf package, for example:
-        (trans,rot) = self.listener.lookupTransform('/map', '/base_link', rospy.Time(0))
+        # but there is also map baselink transform available with corrected odom data
+        try:
+            (trans,rot) = self.listener.lookupTransform('/map', '/base_link', rospy.Time(0))
+        except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
+            return
+                
 
         prev_time = self.time
         current_time = rospy.Time.now().to_sec()
