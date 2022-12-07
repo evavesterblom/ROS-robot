@@ -22,7 +22,7 @@
                 file="$(find ias0220_224772_slam)/config/simple_control_v2.yaml"
                 ns="controller_waypoints" />
 
-    <node name="rviz" pkg="rviz" type="rviz" args="--display-config '$(find ias0220_224772_slam)/config/robot_amcl.rviz'" />
+    <node name="rviz" pkg="rviz" type="rviz" args="--display-config '$(find ias0220_224772_slam)/config/robot_kidnap.rviz'" />
 
     <node pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" name="teleop" output="screen">
         <remap from="cmd_vel" to="controller_diffdrive/cmd_vel"/>
@@ -38,13 +38,13 @@
         <!-- Publish scans from best pose at a max of 10 Hz -->
         <param name="odom_model_type" value="diff"/>
         <param name="odom_alpha5" value="0.1"/>
-        <param name="transform_tolerance" value="0.2" />
+        <param name="transform_tolerance" value="0.1" />
         <param name="gui_publish_rate" value="10.0"/>
         <param name="laser_max_beams" value="30"/>
         <param name="min_particles" value="500"/>
         <param name="max_particles" value="5000"/>
-        <param name="kld_err" value="0.05"/>
-        <param name="kld_z" value="0.99"/>
+        <param name="kld_err" value="0.03"/>
+        <param name="kld_z" value="0.89"/>
         <param name="odom_model_type" value="diff-corrected"/>
         <param name="odom_alpha1" value="0.5"/>
         <param name="odom_alpha2" value="0.2"/>
