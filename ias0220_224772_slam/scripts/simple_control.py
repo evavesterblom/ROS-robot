@@ -82,11 +82,6 @@ class PDController:
         self.done = False
 
     def wrapAngle(self, angle):
-        # if (abs(angle) > math.pi):
-        #     a = 2*math.pi - abs(angle)
-        #     return -a
-        # else:
-        #     return angle
         if (angle > math.pi):
             return angle - 2*math.pi
         elif (angle < -math.pi):
@@ -219,14 +214,13 @@ class PDController:
                 self.align = False
 
 
-            if ((self.term%10) == 1):
-                rospy.loginfo("Heading is: %.2f degrees",  math.degrees(curr_heading))
-                rospy.loginfo("Goal is: %.2f degrees",  math.degrees(atan))
-                rospy.loginfo("Delta goal is: %.2f",   math.degrees(self.delta_angle))
-                rospy.loginfo("Odom wp is: [%.1f, %.1f]",   curr_position.x, curr_position.y)
-                rospy.loginfo("Goal wp is: %s",   goal)
-                rospy.loginfo("Wall  is: %s",   self.twist.linear )
-                rospy.loginfo("----")
+            # if ((self.term%10) == 1):
+            #     rospy.loginfo("Heading is: %.2f degrees",  math.degrees(curr_heading))
+            #     rospy.loginfo("Goal is: %.2f degrees",  math.degrees(atan))
+            #     rospy.loginfo("Delta goal is: %.2f",   math.degrees(self.delta_angle))
+            #     rospy.loginfo("Odom wp is: [%.1f, %.1f]",   curr_position.x, curr_position.y)
+            #     rospy.loginfo("Goal wp is: %s",   goal)
+            #     rospy.loginfo("----")
 
         if self.isWaypointReached():
             if (self.wpIndex == self.mandatory_wp_count):
