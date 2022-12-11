@@ -1,0 +1,286 @@
+<?xml version="1.0"?>
+<robot name="IAS0220_Evgenia">
+
+  <link name="base_footprint">
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+  </link> 
+  
+  <link name="base_link">
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <visual>
+      <geometry>
+        <cylinder length="0.02" radius="0.1"/>
+        <box size="0.2 0.0001  0.08"/>
+      </geometry>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder length="0.02" radius="0.1"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="100"/>
+      <inertia ixx="0.253" iyy="0.253" izz="0.5" ixy="0"  ixz="0" iyz="0"/>
+    </inertial>
+  </link>
+  
+  <link name="left_wheel">
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <visual>
+      <geometry>
+        <cylinder length="0.008" radius="0.04"/>
+      </geometry>
+      <material name="black_metal">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder length="0.008" radius="0.04"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="15"/>
+      <inertia ixx="0.0061" iyy="0.0061" izz="0.012"  ixy="0"  ixz="0" iyz="0"/>
+    </inertial>   
+  </link>
+  
+  <link name="right_wheel">
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <visual>
+      <geometry>
+        <cylinder length="0.008" radius="0.04"/>
+      </geometry>
+      <material name="black_metal">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder length="0.008" radius="0.04"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="15"/>
+      <inertia ixx="0.0061" iyy="0.0061" izz="0.012" ixy="0"  ixz="0" iyz="0"/>
+    </inertial>
+  </link>
+   
+  <link name="head">
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <visual>
+      <geometry>
+        <box size="0.02 0.02 0.02"/>
+      </geometry>
+      <material name="grey">
+        <color rgba="0.75 0.75 0.75 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.02 0.02 0.02"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="20"/>
+      <inertia ixx="0.0013" iyy="0.0013" izz="0.0013"  ixy="0"  ixz="0" iyz="0"/>
+    </inertial>
+  </link>
+
+  <link name="sensor">
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <visual>
+      <geometry><mesh filename="package://rrbot_description/meshes/hokuyo.dae"/></geometry>
+    </visual>
+    <collision>
+      <geometry><mesh filename="package://rrbot_description/meshes/hokuyo.dae"/></geometry>
+    </collision>
+    <inertial>
+      <mass value="1e-5" />
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+  </link>
+  
+    <link name="passive_wheel_holder">
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <visual>
+      <geometry>
+        <cylinder length="0.02" radius="0.01"/>
+      </geometry>
+      <material name="green">
+        <color rgba="0 1 0 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder length="0.02" radius="0.01"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="20"/>
+     <inertia ixx="0.0012" iyy="0.0012" izz="0.001"  ixy="0"  ixz="0" iyz="0"/>
+    </inertial>
+  </link>
+  
+   <link name="passive_wheel">
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <visual>
+      <geometry>
+        <sphere radius="0.01"/>
+      </geometry>
+      <material name="green">
+            <color rgba="0 1 0 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <sphere radius="0.01"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="20"/>
+      <inertia ixx="0.0008"  iyy="0.0008" izz="0.0008"  ixy="0"  ixz="0" iyz="0"/>
+    </inertial>
+  </link>
+  
+  
+  <joint name="base_to_footprint" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+    <origin rpy="0 0 0" xyz="0 0 0.04"/>
+  </joint>
+  
+  <joint name="base_to_left_wheel" type="continuous">
+    <parent link="base_link"/>
+    <child link="left_wheel"/>
+    <axis xyz="0 0 1"/>
+    <origin rpy="-1.57 0 0" xyz="0 0.1 0"/>
+  </joint>
+  
+  <joint name="base_to_right_wheel" type="continuous">
+    <parent link="base_link"/>
+    <child link="right_wheel"/>
+    <axis xyz="0 0 -1"/>
+    <origin rpy="1.57 0 0" xyz="0 -0.1 0"/>
+  </joint>
+  
+  <joint name="base_to_head" type="fixed">
+    <parent link="base_link"/>
+    <child link="head"/>
+    <origin rpy="0 0 0" xyz="0.05 0 0.02"/>
+  </joint>
+
+  <joint name="base_to_sensor" type="fixed">
+    <parent link="base_link"/>
+    <child link="sensor"/>
+    <origin rpy="0 0 0" xyz="0 0 0.04"/>
+  </joint>
+  
+  <joint name="base_to_wheel_holder" type="fixed">
+    <parent link="base_link"/>
+    <child link="passive_wheel_holder"/>
+    <origin rpy="0 0 0" xyz="0.05 0 -0.02"/>
+  </joint>
+  
+  <joint name="wheel_holder_to_wheel" type="fixed">
+    <parent link="passive_wheel_holder"/>
+    <child link="passive_wheel"/>
+    <origin rpy="0 0 0" xyz="0 0 -0.01"/>
+  </joint>
+
+ <!-- GAZEBO REFERENCES -->
+  <gazebo reference="sensor">
+    <sensor type="ray" name="head_hokuyo_sensor">
+      <pose>0 0 0 0 0 0</pose>
+      <visualize>true</visualize>
+      <update_rate>40</update_rate>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>720</samples>
+            <resolution>1</resolution>
+            <min_angle>-1.570796</min_angle>
+            <max_angle>1.570796</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>0.10</min>
+          <max>30.0</max>
+          <resolution>0.01</resolution>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <!-- Noise parameters based on published spec for Hokuyo laser
+               achieving "+-30mm" accuracy at range < 10m.  A mean of 0.0m and
+               stddev of 0.01m will put 99.7% of samples within 0.03m of the true
+               reading. -->
+          <mean>0.0</mean>
+          <stddev>0.01</stddev>
+        </noise>
+      </ray>
+      <plugin name="gazebo_ros_head_hokuyo_controller" filename="libgazebo_ros_laser.so">
+        <topicName>/scan</topicName>
+        <frameName>sensor</frameName>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+  <gazebo reference="passive_wheel">
+    <mu1>0</mu1>
+    <mu2>0</mu2>
+    <material>Gazebo/Green</material>
+  </gazebo>
+
+  <gazebo reference="left_wheel">
+    <material>Gazebo/Red</material>
+  </gazebo>
+
+  <gazebo reference="right_wheel">
+    <material>Gazebo/Red</material>
+  </gazebo>
+    
+
+  <transmission name="base_to_right_wheel_trans">
+    <type>transmission_interface/SimpleTransmission</type>
+    <actuator name="base_to_right_wheel_motor">
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+    <joint name="base_to_right_wheel">
+      <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+    </joint>
+  </transmission>
+
+  <transmission name="base_to_left_wheel_trans">
+    <type>transmission_interface/SimpleTransmission</type>
+    <actuator name="base_to_left_wheel_motor">
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+    <joint name="base_to_left_wheel">
+      <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+    </joint>
+  </transmission>
+  
+
+
+
+  <gazebo>
+    <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+      <robotNamespace>/</robotNamespace>
+    </plugin>
+
+<plugin name="p3d_base_controller" filename="libgazebo_ros_p3d.so">
+  <alwaysOn>true</alwaysOn>
+  <updateRate>50.0</updateRate>
+  <bodyName>base_link</bodyName>
+  <topicName>ground_truth</topicName>
+  <gaussianNoise>0.01</gaussianNoise>
+  <frameName>map</frameName>
+  <xyzOffsets>0 0 0</xyzOffsets>
+  <rpyOffsets>0 0 0</rpyOffsets>
+</plugin> 
+
+  </gazebo>
+  
+  
+</robot>
