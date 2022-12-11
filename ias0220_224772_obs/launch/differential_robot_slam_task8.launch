@@ -22,7 +22,7 @@
                 file="$(find ias0220_224772_obs)/config/simple_control_v2.yaml"
                 ns="controller_waypoints" />
 
-    <node name="rviz" pkg="rviz" type="rviz" args="--display-config '$(find ias0220_224772_obs)/config/robot_odom_error.rviz'" />
+    <node name="rviz" pkg="rviz" type="rviz" args="--display-config '$(find ias0220_224772_obs)/config/task9_rviz.rviz'" />
 
     <node pkg="ias0220_224772_obs" name="simple_control" type="simple_control.py" output="screen"/>
     <node pkg="ias0220_224772_obs" name="encoders_node" type="encoders_node.py"/>
