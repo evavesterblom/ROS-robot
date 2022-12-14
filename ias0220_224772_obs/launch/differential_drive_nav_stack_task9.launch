@@ -24,11 +24,9 @@
 
     <node name="rviz" pkg="rviz" type="rviz" args="--display-config '$(find ias0220_224772_obs)/config/task9_rviz.rviz'" />
 
-     <!--<node pkg="ias0220_224772_obs" name="simple_control" type="simple_control.py" output="screen"/>-->
     <node pkg="ias0220_224772_obs" name="encoders_node" type="encoders_node.py"/>
     <node pkg="ias0220_224772_obs" name="odometry_node" type="odometry_node_javier.py"/>
     
-    <!--<node pkg="tf" type="static_transform_publisher" name="odom_to_map" args="0 0  0  0 0 0  /map /odom 100" />-->
     <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping">    
     </node> 
     
