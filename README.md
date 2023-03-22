@@ -17,11 +17,11 @@ As an example, we consider the most important robot algorithms:
 **Tasks**
 
 Weekly tasks are divided into different packages:
-- Package ias0220_224772 - task 2, 3, 4: kinematics, ROS tools, URDF model, odometry
-- Package ias0220_224772_vision 
-- Package ias0220_224772_slam
-- Package ias0220_224772_sensor
+- Package ias0220_224772 - kinematics, ROS tools, URDF model, odometry, RVIZ config, subscribers-publishers, topics setup, kinematics with ROS tools
+- Package ias0220_224772_vision - machine vision, openCV implementation, camera calibration
+- Package ias0220_224772_sensor - sensors and data visualization in ROS (IMU), implement control based on pitch(drive forward backwards) -roll (turn and drive)
 - Package ias0220_224772_pid
 - Package ias0220_224772_obs
+- Package ias0220_224772_slam 
 
 
