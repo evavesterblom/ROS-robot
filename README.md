@@ -17,5 +17,11 @@ As an example, we consider the most important robot algorithms:
 **Tasks**
 
 Weekly tasks are divided into different packages:
-- Week 1
+- Package ias0220_224772 - task 2, 3, 4: kinematics, ROS tools, URDF model, odometry
+- Package ias0220_224772_vision 
+- Package ias0220_224772_slam
+- Package ias0220_224772_sensor
+- Package ias0220_224772_pid
+- Package ias0220_224772_obs
+
 
