@@ -1,5 +1,7 @@
 # Robot guidance and software
 
+![Diff Drive Robot](ias0220_224772/data/robot_rviz_with_frames_task2_2.png)
+
 The aim of the course is to provide basic knowledge in robot programming.
 To do this, we will first introduce the cross-hardware robot operating system ROS, which is the most widely used robot operating system. 
 The structure of such an operating system is different from the operating system of computers, 
