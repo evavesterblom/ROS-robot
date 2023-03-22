@@ -12,7 +12,7 @@ As an example, we consider the most important robot algorithms:
 - modeling the robot's surroundings, 
 - determining its position, 
 - planning the path and 
-- avoiding obstacles on the way.
+- avoiding obstacles on the way
 
 **Tasks**
 
