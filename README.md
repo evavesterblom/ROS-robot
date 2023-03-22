@@ -24,11 +24,12 @@ Weekly tasks are divided into different packages:
 - Package ias0220_224772_obs - path planning and obstacle avoidance using odometry, control
 - Package ias0220_224772_slam -  mapping and mapping algorithms
 
-AMCL testing in simulation - https://youtu.be/-50NygNJ52s
-AMCL kidnapped in simulation - https://youtu.be/faS053IOvQc
-Path planning testing in simulation - https://youtu.be/WpgUh_Anijo
-PID and robot control implementation (odometry implementation) - https://youtu.be/sxULUTWcvZQ
-Odometry implementation - https://youtu.be/0LQANRFGBno
+**Videos**
+* AMCL testing in simulation https://youtu.be/-50NygNJ52s
+* AMCL kidnapped in simulation - https://youtu.be/faS053IOvQc
+* Path planning testing in simulation - https://youtu.be/WpgUh_Anijo
+* PID and robot control implementation (odometry implementation) - https://youtu.be/sxULUTWcvZQ
+* Odometry implementation - https://youtu.be/0LQANRFGBno
 
 
 
